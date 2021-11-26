@@ -9,8 +9,8 @@ class AStarApp(Tk):
         self._frame = None
         window_width = 600
         window_height = 300
-        BG_COLOR = "#990011"
-        FG_COLOR = "#FCF6F5"
+        BG_COLOR = "#8B2635"
+        FG_COLOR = "#D2D4C8"
 
         self.title("A* algorithm demonstration")
         self.iconbitmap("resources\icon.ico")
@@ -44,9 +44,7 @@ class AStarApp(Tk):
 
 
 class MainMenu(Frame):
-    def __init__(
-        self, parent: AStarApp, BG_COLOR="#990011", FG_COLOR="#FCF6F5"
-    ):  # Cherry and Hwite
+    def __init__(self, parent: AStarApp, BG_COLOR, FG_COLOR):
         Frame.__init__(self, parent, background=BG_COLOR)
         title_label = Label(
             self,
@@ -127,8 +125,13 @@ class GridWindow(Frame):
     def __init__(self, parent: AStarApp, BG_COLOR, FG_COLOR, rows, columns):
         self.pixel_width = 20
         self.rect_ids = []
+
         self.BG_COLOR = BG_COLOR
         self.FG_COLOR = FG_COLOR
+        self.WALL_COLOR = "#2E3532"
+        self.START_COLOR = "#E0E2DB"
+        self.DEST_COLOR = "#D3EFBD"
+
         self.rows = rows
         self.columns = columns
         self.erase = False
@@ -173,7 +176,7 @@ class GridWindow(Frame):
         rect_id = self.get_clicked_square(event.x, event.y)
         if rect_id != -1:
             if self.canvas.itemcget(rect_id, "fill") == self.BG_COLOR:
-                self.canvas.itemconfig(rect_id, fill="Black")
+                self.canvas.itemconfig(rect_id, fill=self.WALL_COLOR)
                 self.erase = False
             else:
                 self.canvas.itemconfig(rect_id, fill=self.BG_COLOR)
@@ -184,7 +187,7 @@ class GridWindow(Frame):
         if rect_id != -1:
             if not self.erase:
                 if self.canvas.itemcget(rect_id, "fill") == self.BG_COLOR:
-                    self.canvas.itemconfig(rect_id, fill="Black")
+                    self.canvas.itemconfig(rect_id, fill=self.WALL_COLOR)
             else:
                 self.canvas.itemconfig(rect_id, fill=self.BG_COLOR)
 
@@ -193,9 +196,9 @@ class GridWindow(Frame):
         if rect_id != -1:
             color = self.canvas.itemcget(rect_id, "fill")
             if color == self.BG_COLOR:
-                self.canvas.itemconfig(rect_id, fill="Green")
-            elif color == "Green":
-                self.canvas.itemconfig(rect_id, fill=self.BG_COLOR)
+                self.canvas.itemconfig(rect_id, fill=self.START_COLOR)
+            elif color == self.START_COLOR:
+                self.canvas.itemconfig(rect_id, fill=self.DEST_COLOR)
 
     def clear_grid(self, event):
         for rect in self.rect_ids:
