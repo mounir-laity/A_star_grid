@@ -131,6 +131,7 @@ class GridWindow(Frame):
         self.FG_COLOR = FG_COLOR
         self.rows = rows
         self.columns = columns
+        self.erase = False
 
         Frame.__init__(
             self,
@@ -149,6 +150,7 @@ class GridWindow(Frame):
         self.canvas.bind("<Button-1>", self.handle_left_click)
         self.canvas.bind("<B1-Motion>", self.draw)
         self.canvas.bind("<Button-3>", self.handle_right_click)
+        self.canvas.bind("<Button-2>", self.clear_grid)
 
     def create_grid(self, rows, columns):
         for y in range(rows):
@@ -168,20 +170,23 @@ class GridWindow(Frame):
         return -1
 
     def handle_left_click(self, event):
-        print("left")
         rect_id = self.get_clicked_square(event.x, event.y)
         if rect_id != -1:
             if self.canvas.itemcget(rect_id, "fill") == self.BG_COLOR:
                 self.canvas.itemconfig(rect_id, fill="Black")
+                self.erase = False
             else:
                 self.canvas.itemconfig(rect_id, fill=self.BG_COLOR)
+                self.erase = True
 
     def draw(self, event):
-        print("draw")
         rect_id = self.get_clicked_square(event.x, event.y)
         if rect_id != -1:
-            if self.canvas.itemcget(rect_id, "fill") == self.BG_COLOR:
-                self.canvas.itemconfig(rect_id, fill="Black")
+            if not self.erase:
+                if self.canvas.itemcget(rect_id, "fill") == self.BG_COLOR:
+                    self.canvas.itemconfig(rect_id, fill="Black")
+            else:
+                self.canvas.itemconfig(rect_id, fill=self.BG_COLOR)
 
     def handle_right_click(self, event):
         rect_id = self.get_clicked_square(event.x, event.y)
@@ -190,6 +195,10 @@ class GridWindow(Frame):
                 self.canvas.itemconfig(rect_id, fill="Green")
             else:
                 self.canvas.itemconfig(rect_id, fill=self.BG_COLOR)
+
+    def clear_grid(self, event):
+        for rect in self.rect_ids:
+            self.canvas.itemconfig(rect, fill=self.BG_COLOR)
 
 
 if __name__ == "__main__":
