@@ -78,7 +78,7 @@ class MainMenu(Frame):
             fg=FG_COLOR,
         )
 
-        value_list = [i for i in range(5, 41)]
+        value_list = [i for i in range(10, 41)]
         height_box = Combobox(
             self,
             values=value_list,
@@ -87,7 +87,7 @@ class MainMenu(Frame):
             state="readonly",
             font=("Courrier", 15),
         )
-        height_box.current(5)
+        height_box.current(0)
 
         width_box = Combobox(
             self,
@@ -97,7 +97,7 @@ class MainMenu(Frame):
             state="readonly",
             font=("Courrier", 15),
         )
-        width_box.current(5)
+        width_box.current(0)
 
         launch_button = Button(
             self,
@@ -217,6 +217,8 @@ class GridWindow(Frame):
     def clear_grid(self, event):
         for rect in self.rect_ids:
             self.canvas.itemconfig(rect, fill=self.BG_COLOR)
+        self.has_dest = False
+        self.has_start = False
 
 
 if __name__ == "__main__":
