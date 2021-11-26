@@ -191,9 +191,10 @@ class GridWindow(Frame):
     def handle_right_click(self, event):
         rect_id = self.get_clicked_square(event.x, event.y)
         if rect_id != -1:
-            if self.canvas.itemcget(rect_id, "fill") == self.BG_COLOR:
+            color = self.canvas.itemcget(rect_id, "fill")
+            if color == self.BG_COLOR:
                 self.canvas.itemconfig(rect_id, fill="Green")
-            else:
+            elif color == "Green":
                 self.canvas.itemconfig(rect_id, fill=self.BG_COLOR)
 
     def clear_grid(self, event):
