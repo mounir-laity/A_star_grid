@@ -1,6 +1,6 @@
 from tkinter import *
 from tkinter.ttk import Combobox
-from time import sleep
+from typing import List
 
 
 class AStarApp(Tk):
@@ -35,7 +35,7 @@ class AStarApp(Tk):
 
     def change_to_grid_window(self, BG_COLOR, FG_COLOR, rows, columns):
         new_frame = GridWindow(self, BG_COLOR, FG_COLOR, rows, columns)
-        new_heigth = (rows + 2) * new_frame.pixel_width
+        new_heigth = (rows + 2) * new_frame.pixel_width + 60
         new_width = (columns + 2) * new_frame.pixel_width
         x_window = self.screen_width // 2 - new_width // 2
         y_window = self.screen_height // 2 - new_heigth // 2
@@ -146,6 +146,14 @@ class GridWindow(Frame):
             width=(columns + 2) * self.pixel_width,
         )
         self.canvas = Canvas(self, bg=BG_COLOR, bd=0, highlightthickness=0)
+        self.gen_button = Button(
+            self,
+            text="Generate",
+            font=("Courrier", 15),
+            bg=BG_COLOR,
+            fg=FG_COLOR,
+            command=self.launch,
+        )
 
         self.canvas.grid(row=0, column=0, padx=self.pixel_width, pady=self.pixel_width)
         self.canvas.config(
@@ -156,6 +164,8 @@ class GridWindow(Frame):
         self.canvas.bind("<B1-Motion>", self.draw)
         self.canvas.bind("<Button-3>", self.handle_right_click)
         self.canvas.bind("<Button-2>", self.clear_grid)
+
+        self.gen_button.grid(row=1, column=0)
 
     def create_grid(self, rows, columns):
         for y in range(rows):
@@ -220,7 +230,16 @@ class GridWindow(Frame):
         self.has_dest = False
         self.has_start = False
 
+    def launch(self):
+        print("launching !")
+
+
+class Level:
+    def __init__(self, rows, columns) -> None:
+        my_list = list(range(1, (rows * columns) + 1))
+
 
 if __name__ == "__main__":
+    level = Level(10, 10)
     app = AStarApp()
     app.mainloop()
