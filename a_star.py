@@ -137,6 +137,7 @@ class GridWindow(Frame):
         self.erase_mode = False
         self.has_start = False
         self.has_dest = False
+        self.generated = False
 
         Frame.__init__(
             self,
@@ -185,61 +186,59 @@ class GridWindow(Frame):
         return -1
 
     def handle_left_click(self, event):
-        rect_id = self.get_clicked_square(event.x, event.y)
-        if rect_id != -1:
-            color = self.canvas.itemcget(rect_id, "fill")
-            if color == self.BG_COLOR:
-                self.canvas.itemconfig(rect_id, fill=self.WALL_COLOR)
-                self.erase_mode = False
-            elif color == self.WALL_COLOR:
-                self.canvas.itemconfig(rect_id, fill=self.BG_COLOR)
-                self.erase_mode = True
-
-    def draw(self, event):
-        rect_id = self.get_clicked_square(event.x, event.y)
-        if rect_id != -1:
-            color = self.canvas.itemcget(rect_id, "fill")
-            if not self.erase_mode:
+        if not self.generated:
+            rect_id = self.get_clicked_square(event.x, event.y)
+            if rect_id != -1:
+                color = self.canvas.itemcget(rect_id, "fill")
                 if color == self.BG_COLOR:
                     self.canvas.itemconfig(rect_id, fill=self.WALL_COLOR)
-            else:
-                if color != self.START_COLOR and color != self.DEST_COLOR:
+                    self.erase_mode = False
+                elif color == self.WALL_COLOR:
                     self.canvas.itemconfig(rect_id, fill=self.BG_COLOR)
+                    self.erase_mode = True
+
+    def draw(self, event):
+        if not self.generated:
+            rect_id = self.get_clicked_square(event.x, event.y)
+            if rect_id != -1:
+                color = self.canvas.itemcget(rect_id, "fill")
+                if not self.erase_mode:
+                    if color == self.BG_COLOR:
+                        self.canvas.itemconfig(rect_id, fill=self.WALL_COLOR)
+                else:
+                    if color != self.START_COLOR and color != self.DEST_COLOR:
+                        self.canvas.itemconfig(rect_id, fill=self.BG_COLOR)
 
     def handle_right_click(self, event):
-        rect_id = self.get_clicked_square(event.x, event.y)
-        if rect_id != -1:
-            color = self.canvas.itemcget(rect_id, "fill")
-            if color == self.BG_COLOR:
-                if not self.has_start:
-                    self.has_start = True
-                    self.canvas.itemconfig(rect_id, fill=self.START_COLOR)
-                elif not self.has_dest:
-                    self.has_dest = True
-                    self.canvas.itemconfig(rect_id, fill=self.DEST_COLOR)
-            elif color == self.START_COLOR:
-                self.canvas.itemconfig(rect_id, fill=self.BG_COLOR)
-                self.has_start = False
-            elif color == self.DEST_COLOR:
-                self.canvas.itemconfig(rect_id, fill=self.BG_COLOR)
-                self.has_dest = False
+        if not self.generated:
+            rect_id = self.get_clicked_square(event.x, event.y)
+            if rect_id != -1:
+                color = self.canvas.itemcget(rect_id, "fill")
+                if color == self.BG_COLOR:
+                    if not self.has_start:
+                        self.has_start = True
+                        self.canvas.itemconfig(rect_id, fill=self.START_COLOR)
+                    elif not self.has_dest:
+                        self.has_dest = True
+                        self.canvas.itemconfig(rect_id, fill=self.DEST_COLOR)
+                elif color == self.START_COLOR:
+                    self.canvas.itemconfig(rect_id, fill=self.BG_COLOR)
+                    self.has_start = False
+                elif color == self.DEST_COLOR:
+                    self.canvas.itemconfig(rect_id, fill=self.BG_COLOR)
+                    self.has_dest = False
 
     def clear_grid(self, event):
-        for rect in self.rect_ids:
-            self.canvas.itemconfig(rect, fill=self.BG_COLOR)
-        self.has_dest = False
-        self.has_start = False
+        if not self.generated:
+            for rect in self.rect_ids:
+                self.canvas.itemconfig(rect, fill=self.BG_COLOR)
+            self.has_dest = False
+            self.has_start = False
 
     def launch(self):
-        print("launching !")
-
-
-class Level:
-    def __init__(self, rows, columns) -> None:
-        my_list = list(range(1, (rows * columns) + 1))
+        self.generated = True
 
 
 if __name__ == "__main__":
-    level = Level(10, 10)
     app = AStarApp()
     app.mainloop()
