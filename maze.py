@@ -1,7 +1,3 @@
-from typing import List
-from math import sqrt
-
-
 class Node:
     def __init__(self, row: int, column: int, parent=None) -> None:
         self.row = row
@@ -33,13 +29,15 @@ class Node:
         else:
             column_diff = dest_column - column
 
-        return sqrt((row_diff * row_diff) + (column_diff * column_diff))
+        return (row_diff * row_diff) + (column_diff * column_diff)
 
 
 class Graph:
     def __init__(self, rows, columns, start_node=None, end_node=None) -> None:
         self.start_node = start_node
         self.end_node = end_node
+        self.rows = rows
+        self.columns = columns
         self.nodes = []
         for row in range(rows):
             list_nodes = []
@@ -55,24 +53,29 @@ class Graph:
             for i in range(row - 1, row + 2):
                 for j in range(column - 1, column + 2):
                     if i != current_node.row or j != current_node.column:
-                        list_neighbours.append(self.nodes[i][j])
+                        if i >= 0 and j >= 0 and i < self.rows and j < self.columns:
+                            list_neighbours.append(self.nodes[i][j])
         else:
             for i in range(row - 1, row + 2):
                 for j in range(column - 1, column + 2):
                     if (i == row and not j == column) or (
                         not i == row and j == column
                     ):  # xor
-                        list_neighbours.append(self.nodes[i][j])
+                        if i >= 0 and j >= 0 and i < self.rows and j < self.columns:
+                            list_neighbours.append(self.nodes[i][j])
         return list_neighbours
 
     def get_node(self, row, column) -> Node:
         return self.nodes[row][column]
 
+    def a_star_algo(self):
+        explored_nodes = []
+
 
 if __name__ == "__main__":
     my_graph = Graph(10, 10)
-    print(my_graph.get_node(3, 3).get_cost(my_graph.get_node(0, 0)))
-    # my_list = my_graph.get_neighbours(my_graph.get_node(3, 3), True)
-    # for my_node in my_list:
-    #     print(my_node.get_position())
+    # print(my_graph.get_node(3, 3).get_cost(my_graph.get_node(3, 5)))
+    my_list = my_graph.get_neighbours(my_graph.get_node(9, 9), True)
+    for my_node in my_list:
+        print(my_node.get_position())
     # print(my_graph.get_node(3, 3).get_position())
