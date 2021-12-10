@@ -2,7 +2,7 @@ from typing import List
 
 
 class Node:
-    def __init__(self, row: int, column: int, parent) -> None:
+    def __init__(self, row: int, column: int, parent=None) -> None:
         self.row = row
         self.column = column
         self.parent = parent
@@ -18,7 +18,9 @@ class Node:
 
 
 class Graph:
-    def __init__(self, rows, columns) -> None:
+    def __init__(self, rows, columns, start_node, end_node) -> None:
+        self.start_node = start_node
+        self.end_node = end_node
         self.nodes = []
         for row in range(rows):
             list_nodes = []
@@ -50,7 +52,7 @@ class Graph:
 
 if __name__ == "__main__":
     my_graph = Graph(10, 10)
-    my_list = my_graph.get_neighbours(my_graph.get_node(3, 3), False)
+    my_list = my_graph.get_neighbours(my_graph.get_node(3, 3), True)
     for my_node in my_list:
         print(my_node.get_position())
     # print(my_graph.get_node(3, 3).get_position())
