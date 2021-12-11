@@ -18,31 +18,23 @@ class Node:
         return self.position == other.position
 
     def __lt__(self, other):
-        return self.f < other.f
+        if self.f < other.f:
+            return True
+        return self.g > other.g
 
-    def set_heuristic(
-        self, start_node: "Node", dest_node: "Node", allow_diagonal=False
-    ):
+    def set_heuristic(self, dest_node: "Node", allow_diagonal=False):
         row = self.position[0]
         column = self.position[1]
 
-        start_row = start_node.position[0]
-        start_column = start_node.position[1]
-
         dest_row = dest_node.position[0]
         dest_column = dest_node.position[1]
-
-        row_diff_start = abs(row - start_row)
-        column_diff_start = abs(column - start_column)
 
         row_diff_dest = abs(row - dest_row)
         column_diff_dest = abs(column - dest_column)
 
         if allow_diagonal:
-            self.g = self.chebyshev_distance(row_diff_start, column_diff_start)
             self.h = self.chebyshev_distance(row_diff_dest, column_diff_dest)
         else:
-            self.g = self.manhattan_distance(row_diff_start, column_diff_start)
             self.h = self.manhattan_distance(row_diff_dest, column_diff_dest)
         self.f = self.g + self.h
 
@@ -110,49 +102,38 @@ class Graph:
         self.end_node = self.get_node(row, column)
 
     def a_star_algo(self, allow_diagonal=True) -> list[tuple[int, int]]:
-        explored_nodes: list[Node] = []
-        nodes_to_explore: list[Node] = []
-        self.start_node.set_heuristic(
-            start_node=self.start_node,
-            dest_node=self.end_node,
-            allow_diagonal=allow_diagonal,
-        )
-        nodes_to_explore.append(self.start_node)
-        while nodes_to_explore:
-            nodes_to_explore.sort()
-            current_node: Node = nodes_to_explore.pop(0)
-            explored_nodes.append(current_node)
-
-            if current_node == self.end_node:
+        explored = []
+        to_explore = []
+        self.start_node.g = 0
+        self.start_node.set_heuristic(self.end_node, allow_diagonal)
+        to_explore.append(self.start_node)
+        while to_explore:
+            to_explore.sort()
+            current = to_explore.pop(0)
+            explored.append(current)
+            print(current.position)
+            if current == self.end_node:
                 path = []
-                while current_node != self.start_node:
-                    path.append(current_node.position)
-                    current_node = current_node.parent
+                while current != self.start_node:
+                    path.append(current.position)
+                    current = current.parent
                 path.append(self.start_node.position)
-                return path[::-1], explored_nodes
+                # Return reversed path
+                return path[::-1], explored
 
-            neighbours = self.get_neighbours(current_node, allow_diagonal)
+            neighbours = self.get_neighbours(current, allow_diagonal)
             for neighbour in neighbours:
-                neighbour.set_heuristic(
-                    start_node=self.start_node,
-                    dest_node=self.end_node,
-                    allow_diagonal=allow_diagonal,
-                )
-            neighbours.sort(reverse=True)
+                neighbour.g = current.g + 1
+                neighbour.set_heuristic(self.end_node, allow_diagonal)
+            neighbours.sort()
             for neighbour in neighbours:
-                if (
-                    neighbour not in explored_nodes
-                    and neighbour not in nodes_to_explore
-                    and not self.is_wall(neighbour)
-                ):
-                    if neighbour.f <= current_node.f:
-                        neighbour.parent = current_node
-                        nodes_to_explore.append(neighbour)
-                    elif not nodes_to_explore:
-                        neighbour.parent = current_node
-                        nodes_to_explore.append(neighbour)
-
-        return None, explored_nodes
+                if self.is_wall(neighbour):
+                    continue
+                if neighbour in explored:
+                    continue
+                neighbour.parent = current
+                to_explore.append(neighbour)
+        return None, explored
 
 
 if __name__ == "__main__":
