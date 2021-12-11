@@ -1,38 +1,45 @@
 class Node:
     def __init__(self, row: int, column: int, parent=None) -> None:
-        self.row = row
-        self.column = column
+        self.position = (row, column)
         self.parent = parent
+        self.g = 0  # Distance to start node
+        self.h = 0  # Distance to goal node
+        self.f = 0  # Total cost
 
     def set_parent(self, new_parent):
         self.parent = new_parent
 
     def __eq__(self, other):
-        return self.row == other.row and self.column == other.column
+        return self.position == other.position
 
-    def get_position(self):
-        return self.row, self.column
+    def __lt__(self, other):
+        return self.f < other.f
 
-    def get_heuristic(self, dest_node: "Node", allow_diagonal=False):
-        row = self.row
-        column = self.column
-        dest_pos = dest_node.get_position()
-        dest_row = dest_pos[0]
-        dest_column = dest_pos[1]
-        if row >= dest_row:
-            row_diff = row - dest_row
-        else:
-            row_diff = dest_row - row
+    def set_heuristic(
+        self, start_node: "Node", dest_node: "Node", allow_diagonal=False
+    ):
+        row = self.position[0]
+        column = self.position[1]
 
-        if column >= dest_column:
-            column_diff = column - dest_column
-        else:
-            column_diff = dest_column - column
+        start_row = start_node.position[0]
+        start_column = start_node.position[1]
+
+        dest_row = dest_node.position[0]
+        dest_column = dest_node.position[1]
+
+        row_diff_start = abs(row - start_row)
+        column_diff_start = abs(column - start_column)
+
+        row_diff_dest = abs(row - dest_row)
+        column_diff_dest = abs(column - dest_column)
 
         if allow_diagonal:
-            return self.chebyshev_distance(row_diff, column_diff)
+            self.g = self.chebyshev_distance(row_diff_start, column_diff_start)
+            self.h = self.chebyshev_distance(row_diff_dest, column_diff_dest)
         else:
-            return self.manhattan_distance(row_diff, column_diff)
+            self.g = self.manhattan_distance(row_diff_start, column_diff_start)
+            self.h = self.manhattan_distance(row_diff_dest, column_diff_dest)
+        self.f = self.g + self.h
 
     def manhattan_distance(self, row_diff, column_diff):
         return row_diff + column_diff
@@ -46,8 +53,8 @@ class Node:
 
 class Graph:
     def __init__(self, rows, columns, start_node=None, end_node=None) -> None:
-        self.start_node = start_node
-        self.end_node = end_node
+        self.start_node: Node = start_node
+        self.end_node: Node = end_node
         self.rows = rows
         self.columns = columns
         self.nodes = []
@@ -65,8 +72,8 @@ class Graph:
         return node_to_check in self.walls
 
     def get_neighbours(self, current_node: Node, allow_diagonal=True) -> list[Node]:
-        row = current_node.row
-        column = current_node.column
+        row = current_node.position[0]
+        column = current_node.position[1]
         list_neighbours = []
         if allow_diagonal:
             for i in range(row - 1, row + 2):
@@ -87,9 +94,34 @@ class Graph:
     def get_node(self, row, column) -> Node:
         return self.nodes[row][column]
 
-    def a_star_algo(self):
+    def a_star_algo(self, allow_diagonal=True):
         explored_nodes = []
         nodes_to_explore = []
+        self.start_node.set_heuristic(
+            start_node=self.start_node,
+            dest_node=self.end_node,
+            allow_diagonal=allow_diagonal,
+        )
+        nodes_to_explore.append(self.start_node)
+        while nodes_to_explore:
+            nodes_to_explore.sort()
+            current_node: Node = nodes_to_explore.pop(0)
+            explored_nodes.append(current_node)
+
+            if current_node == self.end_node:
+                path = []
+                while current_node != self.start_node:
+                    path.append(current_node.position)
+                    current_node = current_node.parent
+                return path[::-1]
+
+            row, column = current_node.position
+            neighbours = self.get_neighbours(current_node, allow_diagonal)
+            for neighbour in neighbours:
+                if self.is_wall(neighbour):
+                    continue
+                else:
+                    pass
 
 
 if __name__ == "__main__":
