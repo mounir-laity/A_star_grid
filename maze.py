@@ -20,6 +20,8 @@ class Node:
     def __lt__(self, other):
         if self.f < other.f:
             return True
+        if other.f < self.f:
+            return False
         return self.g > other.g
 
     def set_heuristic(self, dest_node: "Node", allow_diagonal=False):
@@ -111,7 +113,6 @@ class Graph:
             to_explore.sort()
             current = to_explore.pop(0)
             explored.append(current)
-            print(current.position)
             if current == self.end_node:
                 path = []
                 while current != self.start_node:
@@ -138,12 +139,13 @@ class Graph:
 
 
 if __name__ == "__main__":
-    my_graph = Graph(10, 10, Node(0, 0), Node(3, 3))
-    my_graph.walls.append(my_graph.get_node(0, 2))
-    my_graph.walls.append(my_graph.get_node(1, 2))
-    my_graph.walls.append(my_graph.get_node(2, 2))
-    my_graph.walls.append(my_graph.get_node(3, 2))
-    my_graph.walls.append(my_graph.get_node(4, 2))
-    my_graph.walls.append(my_graph.get_node(5, 2))
-    my_graph.walls.append(my_graph.get_node(6, 2))
+    my_graph = Graph(10, 10, Node(7, 3), Node(7, 5))
+    my_graph.walls.append(my_graph.get_node(1, 4))
+    my_graph.walls.append(my_graph.get_node(2, 4))
+    my_graph.walls.append(my_graph.get_node(7, 4))
+    my_graph.walls.append(my_graph.get_node(3, 4))
+    my_graph.walls.append(my_graph.get_node(4, 4))
+    my_graph.walls.append(my_graph.get_node(5, 4))
+    my_graph.walls.append(my_graph.get_node(6, 4))
+    my_graph.walls.append(my_graph.get_node(8, 4))
     print(my_graph.a_star_algo(False)[0])
