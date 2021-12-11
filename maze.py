@@ -1,3 +1,6 @@
+from tkinter.constants import NO
+
+
 class Node:
     def __init__(self, row: int, column: int, parent=None) -> None:
         self.position = (row, column)
@@ -78,7 +81,7 @@ class Graph:
         if allow_diagonal:
             for i in range(row - 1, row + 2):
                 for j in range(column - 1, column + 2):
-                    if i != current_node.row or j != current_node.column:
+                    if i != row or j != column:
                         if i >= 0 and j >= 0 and i < self.rows and j < self.columns:
                             list_neighbours.append(self.nodes[i][j])
         else:
@@ -95,8 +98,8 @@ class Graph:
         return self.nodes[row][column]
 
     def a_star_algo(self, allow_diagonal=True):
-        explored_nodes = []
-        nodes_to_explore = []
+        explored_nodes: list[Node] = []
+        nodes_to_explore: list[Node] = []
         self.start_node.set_heuristic(
             start_node=self.start_node,
             dest_node=self.end_node,
@@ -115,19 +118,27 @@ class Graph:
                     current_node = current_node.parent
                 return path[::-1]
 
-            row, column = current_node.position
             neighbours = self.get_neighbours(current_node, allow_diagonal)
             for neighbour in neighbours:
                 if self.is_wall(neighbour):
                     continue
                 else:
-                    pass
+                    neighbour.set_heuristic(
+                        start_node=self.start_node,
+                        dest_node=self.end_node,
+                        allow_diagonal=allow_diagonal,
+                    )
+                    if (
+                        neighbour not in explored_nodes
+                        and neighbour not in nodes_to_explore
+                    ):
+                        if neighbour.f <= current_node.f:
+                            neighbour.parent = current_node
+                            nodes_to_explore.append(neighbour)
+
+        return None
 
 
 if __name__ == "__main__":
-    my_graph = Graph(10, 10)
-    print(my_graph.get_node(3, 3).get_heuristic(my_graph.get_node(5, 5), True))
-    # my_list = my_graph.get_neighbours(my_graph.get_node(9, 9), True)
-    # for my_node in my_list:
-    #     print(my_node.get_position())
-    # print(my_graph.get_node(3, 3).get_position())
+    my_graph = Graph(10, 10, Node(0, 0), Node(5, 7))
+    print(my_graph.a_star_algo(False))
