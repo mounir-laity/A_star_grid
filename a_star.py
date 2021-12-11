@@ -135,8 +135,8 @@ class GridWindow(Frame):
         self.rows = rows
         self.columns = columns
         self.erase_mode = False
-        self.start = None
-        self.dest = None
+        self.has_start = False
+        self.has_dest = False
         self.generated = False
 
         Frame.__init__(
@@ -215,41 +215,54 @@ class GridWindow(Frame):
             if rect_id != -1:
                 color = self.canvas.itemcget(rect_id, "fill")
                 if color == self.BG_COLOR:
-                    if self.start is None:
+                    if not self.has_start:
                         self.has_start = True
                         self.canvas.itemconfig(rect_id, fill=self.START_COLOR)
-                    elif self.dest is None:
+                    elif not self.has_dest:
                         self.has_dest = True
                         self.canvas.itemconfig(rect_id, fill=self.DEST_COLOR)
                 elif color == self.START_COLOR:
                     self.canvas.itemconfig(rect_id, fill=self.BG_COLOR)
-                    self.start = None
+                    self.has_start = False
                 elif color == self.DEST_COLOR:
                     self.canvas.itemconfig(rect_id, fill=self.BG_COLOR)
-                    self.dest = None
+                    self.has_dest = False
 
     def clear_grid(self, event):
         if not self.generated:
             for rect in self.rect_ids:
                 self.canvas.itemconfig(rect, fill=self.BG_COLOR)
-            self.dest = None
-            self.start = None
+            self.has_dest = False
+            self.has_start = False
+
+    def get_id_from_position(self, position: tuple[int, int]):
+        row = position[0]
+        column = position[1]
+        return (row + 1) * self.rows + column
 
     def convert_to_graph(self):
-        grid = maze.Graph(self.rows, self.columns)
+        graph = maze.Graph(self.rows, self.columns)
         for rect in self.rect_ids:
             node_row = (rect - 1) // self.rows
             node_column = (rect - 1) % self.rows
             color = self.canvas.itemcget(rect, "fill")
             if color == self.WALL_COLOR:
-                grid.add_wall(grid.get_node(node_row, node_column))
+                graph.add_wall(node_row, node_column)
             elif color == self.START_COLOR:
-                grid.set_start_node(node_row, node_column)
+                graph.set_start_node(node_row, node_column)
             elif color == self.DEST_COLOR:
-                grid.set_end_node(node_row, node_column)
+                graph.set_end_node(node_row, node_column)
+        return graph
 
     def launch(self):
-        self.generated = True
+        if not self.generated:
+            self.generated = True
+            self.convert_to_graph()
+            graph = self.convert_to_graph()
+            path = graph.a_star_algo()
+            for position in path:
+                rect_id = self.get_id_from_position(position)
+                self.canvas.itemconfig(rect_id, fill=self.FG_COLOR)
 
 
 if __name__ == "__main__":
