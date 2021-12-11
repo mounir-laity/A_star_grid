@@ -13,7 +13,7 @@ class Node:
     def get_position(self):
         return self.row, self.column
 
-    def get_cost(self, dest_node: "Node"):
+    def get_cost(self, dest_node: "Node", allow_diagonal=False):
         row = self.row
         column = self.column
         dest_pos = dest_node.get_position()
@@ -30,6 +30,45 @@ class Node:
             column_diff = dest_column - column
 
         return (row_diff * row_diff) + (column_diff * column_diff)
+
+    def manhattan_distance(self, dest_node: "Node"):
+        row = self.row
+        column = self.column
+        dest_pos = dest_node.get_position()
+        dest_row = dest_pos[0]
+        dest_column = dest_pos[1]
+        if row >= dest_row:
+            row_diff = row - dest_row
+        else:
+            row_diff = dest_row - row
+
+        if column >= dest_column:
+            column_diff = column - dest_column
+        else:
+            column_diff = dest_column - column
+
+        return row_diff + column_diff
+
+    def chebyshev_distance(self, dest_node: "Node"):
+        row = self.row
+        column = self.column
+        dest_pos = dest_node.get_position()
+        dest_row = dest_pos[0]
+        dest_column = dest_pos[1]
+        if row >= dest_row:
+            row_diff = row - dest_row
+        else:
+            row_diff = dest_row - row
+
+        if column >= dest_column:
+            column_diff = column - dest_column
+        else:
+            column_diff = dest_column - column
+
+        if row_diff > column_diff:
+            return row_diff
+        else:
+            return column_diff
 
 
 class Graph:
@@ -70,12 +109,13 @@ class Graph:
 
     def a_star_algo(self):
         explored_nodes = []
+        nodes_to_explore = []
 
 
 if __name__ == "__main__":
     my_graph = Graph(10, 10)
-    # print(my_graph.get_node(3, 3).get_cost(my_graph.get_node(3, 5)))
-    my_list = my_graph.get_neighbours(my_graph.get_node(9, 9), True)
-    for my_node in my_list:
-        print(my_node.get_position())
+    print(my_graph.get_node(3, 3).chebyshev_distance(my_graph.get_node(7, 5)))
+    # my_list = my_graph.get_neighbours(my_graph.get_node(9, 9), True)
+    # for my_node in my_list:
+    #     print(my_node.get_position())
     # print(my_graph.get_node(3, 3).get_position())
