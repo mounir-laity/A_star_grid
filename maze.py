@@ -51,13 +51,20 @@ class Graph:
         self.rows = rows
         self.columns = columns
         self.nodes = []
+        self.walls = []
         for row in range(rows):
             list_nodes = []
             for column in range(columns):
                 list_nodes.append(Node(row=row, column=column, parent=None))
             self.nodes.append(list_nodes)
 
-    def get_neighbours(self, current_node: Node, allow_diagonal=True):
+    def add_wall(self, row, column):
+        self.walls.append(self.get_node(row, column))
+
+    def is_wall(self, node_to_check):
+        return node_to_check in self.walls
+
+    def get_neighbours(self, current_node: Node, allow_diagonal=True) -> list[Node]:
         row = current_node.row
         column = current_node.column
         list_neighbours = []
