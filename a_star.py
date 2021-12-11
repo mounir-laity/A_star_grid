@@ -238,13 +238,13 @@ class GridWindow(Frame):
     def get_id_from_position(self, position: tuple[int, int]):
         row = position[0]
         column = position[1]
-        return (row + 1) * self.rows + column
+        return row * self.columns + (column + 1)
 
     def convert_to_graph(self):
         graph = maze.Graph(self.rows, self.columns)
         for rect in self.rect_ids:
-            node_row = (rect - 1) // self.rows
-            node_column = (rect - 1) % self.rows
+            node_row = (rect - 1) // self.columns
+            node_column = (rect - 1) % self.columns
             color = self.canvas.itemcget(rect, "fill")
             if color == self.WALL_COLOR:
                 graph.add_wall(node_row, node_column)
@@ -259,10 +259,13 @@ class GridWindow(Frame):
             self.generated = True
             self.convert_to_graph()
             graph = self.convert_to_graph()
-            path = graph.a_star_algo()
-            for position in path:
-                rect_id = self.get_id_from_position(position)
-                self.canvas.itemconfig(rect_id, fill=self.FG_COLOR)
+            path = graph.a_star_algo(False)
+            if path is not None:
+                for position in path:
+                    rect_id = self.get_id_from_position(position)
+                    self.canvas.itemconfig(rect_id, fill=self.FG_COLOR)
+            else:
+                print("NON")
 
 
 if __name__ == "__main__":

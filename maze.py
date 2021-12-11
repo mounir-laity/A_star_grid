@@ -13,6 +13,8 @@ class Node:
         self.parent = new_parent
 
     def __eq__(self, other):
+        if other is None:
+            return False
         return self.position == other.position
 
     def __lt__(self, other):
@@ -61,7 +63,7 @@ class Graph:
         self.rows = rows
         self.columns = columns
         self.nodes = []
-        self.walls = []
+        self.walls: list[Node] = []
         for row in range(rows):
             list_nodes = []
             for column in range(columns):
@@ -95,7 +97,11 @@ class Graph:
         return list_neighbours
 
     def get_node(self, row, column) -> Node:
-        return self.nodes[row][column]
+        try:
+            return self.nodes[row][column]
+        except IndexError:
+            print(row, column)
+            exit(1)
 
     def set_start_node(self, row, column):
         self.start_node = self.get_node(row, column)
@@ -126,25 +132,39 @@ class Graph:
 
             neighbours = self.get_neighbours(current_node, allow_diagonal)
             for neighbour in neighbours:
+                neighbour.set_heuristic(
+                    start_node=self.start_node,
+                    dest_node=self.end_node,
+                    allow_diagonal=allow_diagonal,
+                )
+
+            neighbours.sort(reverse=True)
+            for neighbour in neighbours:
                 if self.is_wall(neighbour):
                     continue
-                else:
+                elif (
+                    neighbour not in explored_nodes
+                    and neighbour not in nodes_to_explore
+                ):
                     neighbour.set_heuristic(
                         start_node=self.start_node,
                         dest_node=self.end_node,
                         allow_diagonal=allow_diagonal,
                     )
-                    if (
-                        neighbour not in explored_nodes
-                        and neighbour not in nodes_to_explore
-                    ):
-                        if neighbour.f <= current_node.f:
-                            neighbour.parent = current_node
-                            nodes_to_explore.append(neighbour)
+                    if neighbour.f <= current_node.f or not nodes_to_explore:
+                        neighbour.parent = current_node
+                        nodes_to_explore.append(neighbour)
 
         return None
 
 
 if __name__ == "__main__":
     my_graph = Graph(10, 10, Node(0, 0), Node(5, 7))
-    # print(my_graph.a_star_algo(False))
+    my_graph.walls.append(my_graph.get_node(0, 2))
+    my_graph.walls.append(my_graph.get_node(1, 2))
+    my_graph.walls.append(my_graph.get_node(2, 2))
+    my_graph.walls.append(my_graph.get_node(3, 2))
+    my_graph.walls.append(my_graph.get_node(4, 2))
+    my_graph.walls.append(my_graph.get_node(5, 2))
+    my_graph.walls.append(my_graph.get_node(6, 2))
+    print(my_graph.a_star_algo(False))
