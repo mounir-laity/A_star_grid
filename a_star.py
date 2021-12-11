@@ -1,6 +1,6 @@
 from tkinter import *
 from tkinter.ttk import Combobox
-from typing import List
+import maze
 
 
 class AStarApp(Tk):
@@ -135,8 +135,8 @@ class GridWindow(Frame):
         self.rows = rows
         self.columns = columns
         self.erase_mode = False
-        self.has_start = False
-        self.has_dest = False
+        self.start = None
+        self.dest = None
         self.generated = False
 
         Frame.__init__(
@@ -215,25 +215,38 @@ class GridWindow(Frame):
             if rect_id != -1:
                 color = self.canvas.itemcget(rect_id, "fill")
                 if color == self.BG_COLOR:
-                    if not self.has_start:
+                    if self.start is None:
                         self.has_start = True
                         self.canvas.itemconfig(rect_id, fill=self.START_COLOR)
-                    elif not self.has_dest:
+                    elif self.dest is None:
                         self.has_dest = True
                         self.canvas.itemconfig(rect_id, fill=self.DEST_COLOR)
                 elif color == self.START_COLOR:
                     self.canvas.itemconfig(rect_id, fill=self.BG_COLOR)
-                    self.has_start = False
+                    self.start = None
                 elif color == self.DEST_COLOR:
                     self.canvas.itemconfig(rect_id, fill=self.BG_COLOR)
-                    self.has_dest = False
+                    self.dest = None
 
     def clear_grid(self, event):
         if not self.generated:
             for rect in self.rect_ids:
                 self.canvas.itemconfig(rect, fill=self.BG_COLOR)
-            self.has_dest = False
-            self.has_start = False
+            self.dest = None
+            self.start = None
+
+    def convert_to_graph(self):
+        grid = maze.Graph(self.rows, self.columns)
+        for rect in self.rect_ids:
+            node_row = (rect - 1) // self.rows
+            node_column = (rect - 1) % self.rows
+            color = self.canvas.itemcget(rect, "fill")
+            if color == self.WALL_COLOR:
+                grid.add_wall(grid.get_node(node_row, node_column))
+            elif color == self.START_COLOR:
+                grid.set_start_node(node_row, node_column)
+            elif color == self.DEST_COLOR:
+                grid.set_end_node(node_row, node_column)
 
     def launch(self):
         self.generated = True

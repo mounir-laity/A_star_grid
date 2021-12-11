@@ -97,6 +97,12 @@ class Graph:
     def get_node(self, row, column) -> Node:
         return self.nodes[row][column]
 
+    def set_start_node(self, row, column):
+        self.start_node = self.get_node(row, column)
+
+    def set_end_node(self, row, column):
+        self.end_node = self.get_node(row, column)
+
     def a_star_algo(self, allow_diagonal=True):
         explored_nodes: list[Node] = []
         nodes_to_explore: list[Node] = []
@@ -141,4 +147,5 @@ class Graph:
 
 if __name__ == "__main__":
     my_graph = Graph(10, 10, Node(0, 0), Node(5, 7))
-    print(my_graph.a_star_algo(False))
+    # print(my_graph.a_star_algo(False))
+    print(my_graph.get_pos(12))
