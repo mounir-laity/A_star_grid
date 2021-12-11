@@ -259,11 +259,15 @@ class GridWindow(Frame):
             self.generated = True
             self.convert_to_graph()
             graph = self.convert_to_graph()
-            path = graph.a_star_algo(False)
+            path, explored = graph.a_star_algo(False)
+            for node in explored:
+                rect_id = self.get_id_from_position(node.position)
+                self.canvas.itemconfig(rect_id, fill="pink")
             if path is not None:
                 for position in path:
                     rect_id = self.get_id_from_position(position)
                     self.canvas.itemconfig(rect_id, fill=self.FG_COLOR)
+
             else:
                 print("NON")
 

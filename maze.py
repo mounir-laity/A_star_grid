@@ -6,7 +6,7 @@ class Node:
         self.position = (row, column)
         self.parent = parent
         self.g = 0  # Distance to start node
-        self.h = 0  # Distance to goal node
+        self.h = 999  # Distance to goal node
         self.f = 0  # Total cost
 
     def set_parent(self, new_parent):
@@ -128,16 +128,17 @@ class Graph:
                 while current_node != self.start_node:
                     path.append(current_node.position)
                     current_node = current_node.parent
-                return path[::-1]
+                return path[::-1], explored_nodes
 
             neighbours = self.get_neighbours(current_node, allow_diagonal)
             for neighbour in neighbours:
+                if neighbour in explored_nodes or neighbour in nodes_to_explore:
+                    continue
                 neighbour.set_heuristic(
                     start_node=self.start_node,
                     dest_node=self.end_node,
                     allow_diagonal=allow_diagonal,
                 )
-
             neighbours.sort(reverse=True)
             for neighbour in neighbours:
                 if self.is_wall(neighbour):
@@ -146,16 +147,11 @@ class Graph:
                     neighbour not in explored_nodes
                     and neighbour not in nodes_to_explore
                 ):
-                    neighbour.set_heuristic(
-                        start_node=self.start_node,
-                        dest_node=self.end_node,
-                        allow_diagonal=allow_diagonal,
-                    )
                     if neighbour.f <= current_node.f or not nodes_to_explore:
                         neighbour.parent = current_node
                         nodes_to_explore.append(neighbour)
 
-        return None
+        return None, explored_nodes
 
 
 if __name__ == "__main__":
@@ -167,4 +163,4 @@ if __name__ == "__main__":
     my_graph.walls.append(my_graph.get_node(4, 2))
     my_graph.walls.append(my_graph.get_node(5, 2))
     my_graph.walls.append(my_graph.get_node(6, 2))
-    print(my_graph.a_star_algo(False))
+    print(my_graph.a_star_algo(False)[0])
