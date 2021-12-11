@@ -131,8 +131,9 @@ class Graph:
                     continue
                 if neighbour in explored:
                     continue
-                neighbour.parent = current
-                to_explore.append(neighbour)
+                if neighbour not in to_explore:
+                    neighbour.parent = current
+                    to_explore.append(neighbour)
         return None, explored
 
 
