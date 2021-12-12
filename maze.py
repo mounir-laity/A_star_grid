@@ -1,6 +1,3 @@
-from tkinter.constants import NO
-
-
 class Node:
     def __init__(self, row: int, column: int, parent=None) -> None:
         self.position = (row, column)
@@ -148,4 +145,3 @@ if __name__ == "__main__":
     my_graph.walls.append(my_graph.get_node(5, 4))
     my_graph.walls.append(my_graph.get_node(6, 4))
     my_graph.walls.append(my_graph.get_node(8, 4))
-    print(my_graph.a_star_algo(False)[0])

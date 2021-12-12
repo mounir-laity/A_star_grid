@@ -174,9 +174,7 @@ class GridWindow(Frame):
             var=self.allow_diagonal,
             onvalue=True,
             offvalue=False,
-            command=self.set_bool,
             bg=BG_COLOR,
-            fg=FG_COLOR,
         )
 
         self.canvas.grid(
@@ -194,9 +192,6 @@ class GridWindow(Frame):
         self.gen_button.grid(row=1, column=0, padx=10, pady=5)
         self.restart_button.grid(row=1, column=2, padx=10, pady=5)
         self.diagonal_checkbutton.grid(row=2, column=0, padx=10, pady=5, columnspan=3)
-
-    def set_bool(self):
-        print(self.allow_diagonal.get())
 
     def create_grid(self, rows, columns):
         for y in range(rows):
@@ -296,11 +291,11 @@ class GridWindow(Frame):
             if path is not None:
                 for position in path:
                     rect_id = self.get_id_from_position(position)
-                    self.canvas.itemconfig(rect_id, fill=self.FG_COLOR)
+                    self.canvas.itemconfig(rect_id, fill="dark green")
 
             else:
                 alert_box = messagebox.showinfo(
-                    "No path found !", "There are no path to the destination !"
+                    "No path found !", "There is no path to the destination !"
                 )
 
     def restart(self):
