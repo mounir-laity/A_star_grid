@@ -1,4 +1,5 @@
 from tkinter import *
+from tkinter import messagebox
 from tkinter.ttk import Combobox
 import maze
 
@@ -34,8 +35,9 @@ class AStarApp(Tk):
         self.change_frame(new_frame)
 
     def change_to_grid_window(self, BG_COLOR, FG_COLOR, rows, columns):
+        padding = 100
         new_frame = GridWindow(self, BG_COLOR, FG_COLOR, rows, columns)
-        new_heigth = (rows + 2) * new_frame.pixel_width + 60
+        new_heigth = (rows + 2) * new_frame.pixel_width + padding
         new_width = (columns + 2) * new_frame.pixel_width
         x_window = self.screen_width // 2 - new_width // 2
         y_window = self.screen_height // 2 - new_heigth // 2
@@ -138,6 +140,8 @@ class GridWindow(Frame):
         self.has_start = False
         self.has_dest = False
         self.generated = False
+        self.allow_diagonal = BooleanVar()
+        self.allow_diagonal.set(False)
 
         Frame.__init__(
             self,
@@ -149,14 +153,35 @@ class GridWindow(Frame):
         self.canvas = Canvas(self, bg=BG_COLOR, bd=0, highlightthickness=0)
         self.gen_button = Button(
             self,
-            text="Generate",
+            text="Find path",
             font=("Courrier", 15),
             bg=BG_COLOR,
             fg=FG_COLOR,
             command=self.launch,
         )
+        self.restart_button = Button(
+            self,
+            text="Restart",
+            font=("Courrier", 15),
+            bg=BG_COLOR,
+            fg=FG_COLOR,
+            command=self.restart,
+        )
+        self.diagonal_checkbutton = Checkbutton(
+            self,
+            text="Allow diagonal movement",
+            font=("Courrier", 13),
+            var=self.allow_diagonal,
+            onvalue=True,
+            offvalue=False,
+            command=self.set_bool,
+            bg=BG_COLOR,
+            fg=FG_COLOR,
+        )
 
-        self.canvas.grid(row=0, column=0, padx=self.pixel_width, pady=self.pixel_width)
+        self.canvas.grid(
+            row=0, column=0, padx=self.pixel_width, pady=self.pixel_width, columnspan=3
+        )
         self.canvas.config(
             height=rows * self.pixel_width + 1, width=columns * self.pixel_width + 1
         )
@@ -166,7 +191,12 @@ class GridWindow(Frame):
         self.canvas.bind("<Button-3>", self.handle_right_click)
         self.canvas.bind("<Button-2>", self.clear_grid)
 
-        self.gen_button.grid(row=1, column=0)
+        self.gen_button.grid(row=1, column=0, padx=10, pady=5)
+        self.restart_button.grid(row=1, column=2, padx=10, pady=5)
+        self.diagonal_checkbutton.grid(row=2, column=0, padx=10, pady=5, columnspan=3)
+
+    def set_bool(self):
+        print(self.allow_diagonal.get())
 
     def create_grid(self, rows, columns):
         for y in range(rows):
@@ -255,11 +285,11 @@ class GridWindow(Frame):
         return graph
 
     def launch(self):
-        if not self.generated:
+        if not self.generated and self.has_start and self.has_dest:
             self.generated = True
             self.convert_to_graph()
             graph = self.convert_to_graph()
-            path, explored = graph.a_star_algo(False)
+            path, explored = graph.a_star_algo(self.allow_diagonal.get())
             for node in explored:
                 rect_id = self.get_id_from_position(node.position)
                 self.canvas.itemconfig(rect_id, fill="pink")
@@ -269,7 +299,14 @@ class GridWindow(Frame):
                     self.canvas.itemconfig(rect_id, fill=self.FG_COLOR)
 
             else:
-                print("NON")
+                alert_box = messagebox.showinfo(
+                    "No path found !", "There are no path to the destination !"
+                )
+
+    def restart(self):
+        if self.generated:
+            self.generated = False
+            self.clear_grid(None)
 
 
 if __name__ == "__main__":
