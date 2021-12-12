@@ -282,16 +282,18 @@ class GridWindow(Frame):
     def launch(self):
         if not self.generated and self.has_start and self.has_dest:
             self.generated = True
+            path_color = "dark green"
+            explored_color = "#B68488"
             self.convert_to_graph()
             graph = self.convert_to_graph()
             path, explored = graph.a_star_algo(self.allow_diagonal.get())
             for node in explored:
                 rect_id = self.get_id_from_position(node.position)
-                self.canvas.itemconfig(rect_id, fill="pink")
+                self.canvas.itemconfig(rect_id, fill=explored_color)
             if path is not None:
                 for position in path:
                     rect_id = self.get_id_from_position(position)
-                    self.canvas.itemconfig(rect_id, fill="dark green")
+                    self.canvas.itemconfig(rect_id, fill=path_color)
 
             else:
                 alert_box = messagebox.showinfo(
@@ -299,9 +301,8 @@ class GridWindow(Frame):
                 )
 
     def restart(self):
-        if self.generated:
-            self.generated = False
-            self.clear_grid(None)
+        self.generated = False
+        self.clear_grid(None)
 
 
 if __name__ == "__main__":
