@@ -8,10 +8,17 @@ class AStarApp(Tk):
     def __init__(self):
         Tk.__init__(self)
         self._frame = None
+        self.palets = [
+            ["#8B2635", "#D2D4C8"],
+            ["#E63946", "#F1FAEE"],
+            ["#3D405B", "#F4F1DE"],
+        ]
+        # https://coolors.co/e63946-f1faee-a8dadc-457b9d-1d3557
+        # https://coolors.co/f4f1de-e07a5f-3d405b-81b29a-f2cc8f
         window_width = 600
-        window_height = 300
-        BG_COLOR = "#8B2635"
-        FG_COLOR = "#D2D4C8"
+        window_height = 350
+        BG_COLOR = self.palets[2][0]
+        FG_COLOR = self.palets[2][1]
 
         self.title("A* algorithm demonstration")
         self.iconbitmap("resources\icon.ico")
