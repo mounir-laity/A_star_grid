@@ -13,7 +13,7 @@ class AStarApp(Tk):
         # https://coolors.co/e63946-f1faee-a8dadc-457b9d-1d3557
         # https://coolors.co/f4f1de-e07a5f-3d405b-81b29a-f2cc8f
         window_width = 600
-        window_height = 350
+        window_height = 325
 
         self.title("A* algorithm demonstration")
         self.iconbitmap("resources\icon.ico")
@@ -41,6 +41,15 @@ class AStarApp(Tk):
         new_frame = GridWindow(self, palette, rows, columns)
         new_heigth = (rows + 2) * new_frame.pixel_width + padding
         new_width = (columns + 2) * new_frame.pixel_width
+        x_window = self.screen_width // 2 - new_width // 2
+        y_window = self.screen_height // 2 - new_heigth // 2
+        self.geometry("%dx%d+%d+%d" % (new_width, new_heigth, x_window, y_window))
+        self.change_frame(new_frame)
+
+    def change_to_options_window(self, palette: Palettes):
+        new_frame = OptionsWindow(self, self.palette)
+        new_heigth = 325
+        new_width = 600
         x_window = self.screen_width // 2 - new_width // 2
         y_window = self.screen_height // 2 - new_heigth // 2
         self.geometry("%dx%d+%d+%d" % (new_width, new_heigth, x_window, y_window))
@@ -117,15 +126,25 @@ class MainMenu(Frame):
             ),
         )
 
+        options_button = Button(
+            self,
+            text="Options",
+            font=("Courrier", 15),
+            bg=BG_COLOR,
+            fg=FG_COLOR,
+            command=lambda: parent.change_to_options_window(self.palette),
+        )
+
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
         title_label.grid(row=0, column=0, pady=10, columnspan=3)
-        size_label.grid(row=4, column=0, pady=10, ipadx=10, ipady=5, columnspan=2)
-        height_label.grid(row=5, column=0, sticky=E)
-        height_box.grid(row=5, column=1, sticky=W)
-        width_label.grid(row=6, column=0, sticky=E)
-        width_box.grid(row=6, column=1, sticky=W)
-        launch_button.grid(row=7, column=0, pady=20, ipadx=10, ipady=5, columnspan=3)
+        size_label.grid(row=1, column=0, pady=10, ipadx=10, ipady=5, columnspan=2)
+        height_label.grid(row=2, column=0, sticky=E)
+        height_box.grid(row=2, column=1, sticky=W)
+        width_label.grid(row=3, column=0, sticky=E)
+        width_box.grid(row=3, column=1, sticky=W)
+        launch_button.grid(row=4, column=0, pady=10, ipadx=10, ipady=5, columnspan=3)
+        options_button.grid(row=5, column=0, pady=10, ipadx=10, ipady=5, columnspan=3)
 
 
 class GridWindow(Frame):
@@ -310,6 +329,25 @@ class GridWindow(Frame):
     def restart(self):
         self.generated = False
         self.clear_grid(None)
+
+
+class OptionsWindow(Frame):
+    def __init__(self, parent: AStarApp, palette: Palettes):
+        self.palette = palette
+        self.FG_COLOR = palette.value[0]
+        self.BG_COLOR = palette.value[1]
+        Frame.__init__(self, parent, background=palette.value[1])
+
+        palette_selection_label = Label(
+            self,
+            font=("Courrier", 15),
+            bg=self.BG_COLOR,
+            fg=self.FG_COLOR,
+            text="Select your color palette :",
+        )
+
+        self.grid_columnconfigure(0, weight=1)
+        palette_selection_label.grid(row=0, column=0, pady=20, ipady=10)
 
 
 if __name__ == "__main__":
