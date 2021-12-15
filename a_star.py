@@ -345,9 +345,22 @@ class OptionsWindow(Frame):
             fg=self.FG_COLOR,
             text="Select your color palette :",
         )
+        values_list = []
+        for e in Palettes:
+            values_list.append(e.name)
+        palette_selection_box = Combobox(
+            self,
+            values=values_list,
+            width=10,
+            height=10,
+            state="readonly",
+            font=("Courrier", 15),
+        )
+        palette_selection_box.current(0)
 
         self.grid_columnconfigure(0, weight=1)
-        palette_selection_label.grid(row=0, column=0, pady=20, ipady=10)
+        palette_selection_label.grid(row=0, column=0, pady=10, ipady=10)
+        palette_selection_box.grid(row=1, column=0, pady=10, ipady=10)
 
 
 if __name__ == "__main__":
