@@ -2,23 +2,18 @@ from tkinter import *
 from tkinter import messagebox
 from tkinter.ttk import Combobox
 import maze
+from palettes import Palettes
 
 
 class AStarApp(Tk):
     def __init__(self):
         Tk.__init__(self)
         self._frame = None
-        self.palets = [
-            ["#8B2635", "#D2D4C8"],
-            ["#E63946", "#F1FAEE"],
-            ["#3D405B", "#F4F1DE"],
-        ]
+        self.palette = Palettes.DEFAULT
         # https://coolors.co/e63946-f1faee-a8dadc-457b9d-1d3557
         # https://coolors.co/f4f1de-e07a5f-3d405b-81b29a-f2cc8f
         window_width = 600
         window_height = 350
-        BG_COLOR = self.palets[2][0]
-        FG_COLOR = self.palets[2][1]
 
         self.title("A* algorithm demonstration")
         self.iconbitmap("resources\icon.ico")
@@ -28,7 +23,7 @@ class AStarApp(Tk):
         y_window = self.screen_height // 2 - window_height // 2
         self.geometry("%dx%d+%d+%d" % (window_width, window_height, x_window, y_window))
         self.resizable(width=False, height=False)
-        self.change_to_main_menu(BG_COLOR, FG_COLOR)
+        self.change_to_main_menu(self.palette)
         self.mainloop()
 
     def change_frame(self, new_frame):
@@ -37,13 +32,13 @@ class AStarApp(Tk):
         self._frame = new_frame
         self._frame.pack(fill=BOTH, expand=True)
 
-    def change_to_main_menu(self, BG_COLOR, FG_COLOR):
-        new_frame = MainMenu(self, BG_COLOR, FG_COLOR)
+    def change_to_main_menu(self, palette: Palettes):
+        new_frame = MainMenu(self, palette)
         self.change_frame(new_frame)
 
-    def change_to_grid_window(self, BG_COLOR, FG_COLOR, rows, columns):
+    def change_to_grid_window(self, palette: Palettes, rows, columns):
         padding = 100
-        new_frame = GridWindow(self, BG_COLOR, FG_COLOR, rows, columns)
+        new_frame = GridWindow(self, palette, rows, columns)
         new_heigth = (rows + 2) * new_frame.pixel_width + padding
         new_width = (columns + 2) * new_frame.pixel_width
         x_window = self.screen_width // 2 - new_width // 2
@@ -53,8 +48,11 @@ class AStarApp(Tk):
 
 
 class MainMenu(Frame):
-    def __init__(self, parent: AStarApp, BG_COLOR, FG_COLOR):
-        Frame.__init__(self, parent, background=BG_COLOR)
+    def __init__(self, parent: AStarApp, palette: Palettes):
+        self.palette = palette
+        FG_COLOR = palette.value[0]
+        BG_COLOR = palette.value[1]
+        Frame.__init__(self, parent, background=palette.value[1])
         title_label = Label(
             self,
             text="A* ALGORITHM DEMONSTRATION",
@@ -115,7 +113,7 @@ class MainMenu(Frame):
             bg=BG_COLOR,
             fg=FG_COLOR,
             command=lambda: parent.change_to_grid_window(
-                BG_COLOR, FG_COLOR, int(height_box.get()), int(width_box.get())
+                self.palette, int(height_box.get()), int(width_box.get())
             ),
         )
 
@@ -131,15 +129,17 @@ class MainMenu(Frame):
 
 
 class GridWindow(Frame):
-    def __init__(self, parent: AStarApp, BG_COLOR, FG_COLOR, rows, columns):
+    def __init__(self, parent: AStarApp, palette: Palettes, rows, columns):
         self.pixel_width = 20
         self.rect_ids = []
-
-        self.BG_COLOR = BG_COLOR
-        self.FG_COLOR = FG_COLOR
-        self.WALL_COLOR = "#2E3532"
-        self.START_COLOR = "#E0E2DB"
-        self.DEST_COLOR = "#D3EFBD"
+        self.palette = palette
+        self.FG_COLOR = palette.value[0]
+        self.BG_COLOR = palette.value[1]
+        self.WALL_COLOR = palette.value[2]
+        self.START_COLOR = palette.value[3]
+        self.DEST_COLOR = palette.value[4]
+        self.PATH_COLOR = palette.value[5]
+        self.EXPLORED_COLOR = palette.value[6]
 
         self.rows = rows
         self.columns = columns
@@ -153,25 +153,25 @@ class GridWindow(Frame):
         Frame.__init__(
             self,
             parent,
-            background=BG_COLOR,
+            background=self.BG_COLOR,
             height=(rows + 2) * self.pixel_width,
             width=(columns + 2) * self.pixel_width,
         )
-        self.canvas = Canvas(self, bg=BG_COLOR, bd=0, highlightthickness=0)
+        self.canvas = Canvas(self, bg=self.BG_COLOR, bd=0, highlightthickness=0)
         self.gen_button = Button(
             self,
             text="Find path",
             font=("Courrier", 15),
-            bg=BG_COLOR,
-            fg=FG_COLOR,
+            bg=self.BG_COLOR,
+            fg=self.FG_COLOR,
             command=self.launch,
         )
         self.restart_button = Button(
             self,
             text="Restart",
             font=("Courrier", 15),
-            bg=BG_COLOR,
-            fg=FG_COLOR,
+            bg=self.BG_COLOR,
+            fg=self.FG_COLOR,
             command=self.restart,
         )
         self.diagonal_checkbutton = Checkbutton(
@@ -181,7 +181,7 @@ class GridWindow(Frame):
             var=self.allow_diagonal,
             onvalue=True,
             offvalue=False,
-            bg=BG_COLOR,
+            bg=self.BG_COLOR,
         )
 
         self.canvas.grid(
@@ -289,8 +289,8 @@ class GridWindow(Frame):
     def launch(self):
         if not self.generated and self.has_start and self.has_dest:
             self.generated = True
-            path_color = "dark green"
-            explored_color = "#B68488"
+            path_color = self.PATH_COLOR
+            explored_color = self.EXPLORED_COLOR
             self.convert_to_graph()
             graph = self.convert_to_graph()
             path, explored = graph.a_star_algo(self.allow_diagonal.get())
