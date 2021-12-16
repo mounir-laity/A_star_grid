@@ -339,18 +339,18 @@ class OptionsWindow(Frame):
         self.list_components = []
         Frame.__init__(self, parent, background=palette.value[1])
 
-        self.palette_selection_label = Label(
+        palette_selection_label = Label(
             self,
             font=("Courrier", 15),
             bg=self.BG_COLOR,
             fg=self.FG_COLOR,
             text="Select your color palette :",
         )
-        self.list_components.append(self.palette_selection_label)
+        self.list_components.append(palette_selection_label)
         values_list = []
         for e in Palettes:
             values_list.append(e.name.replace("_", " ").capitalize())
-        self.palette_selection_box = Combobox(
+        palette_selection_box = Combobox(
             self,
             values=values_list,
             width=12,
@@ -358,23 +358,33 @@ class OptionsWindow(Frame):
             state="readonly",
             font=("Courrier", 15),
         )
-        self.palette_selection_box.current(0)
-        self.palette_selection_box.bind(
+        palette_selection_box.current(0)
+        palette_selection_box.bind(
             "<<ComboboxSelected>>",
-            lambda _: self.select_color_palette(self.palette_selection_box.get()),
+            lambda _: self.select_color_palette(palette_selection_box.get()),
         )
-        self.list_components.append(self.palette_selection_box)
+        self.list_components.append(palette_selection_box)
+
+        back_to_menu_button = Button(
+            self,
+            text="Back to menu",
+            font=("Courrier", 15),
+            bg=self.BG_COLOR,
+            fg=self.FG_COLOR,
+            command=lambda: parent.change_to_main_menu(self.palette),
+        )
+        self.list_components.append(back_to_menu_button)
 
         self.grid_columnconfigure(0, weight=1)
-        self.palette_selection_label.grid(row=0, column=0, pady=10, ipady=10)
-        self.palette_selection_box.grid(row=1, column=0, pady=10, ipady=10)
+        palette_selection_label.grid(row=0, column=0, pady=10, ipady=10)
+        palette_selection_box.grid(row=1, column=0, pady=10, ipady=10)
+        back_to_menu_button.grid(row=2, column=0, pady=10, ipady=10)
 
     def change_color_palette(self, palette_name: str):
         palette_name = palette_name.upper().replace(" ", "_")
         self.palette = Palettes[palette_name]
         self.FG_COLOR = self.palette.value[0]
         self.BG_COLOR = self.palette.value[1]
-        print(self.palette.name)
         self.config(bg=self.BG_COLOR)
 
     def update_components(self):
