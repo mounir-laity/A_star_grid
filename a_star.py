@@ -336,31 +336,54 @@ class OptionsWindow(Frame):
         self.palette = palette
         self.FG_COLOR = palette.value[0]
         self.BG_COLOR = palette.value[1]
+        self.list_components = []
         Frame.__init__(self, parent, background=palette.value[1])
 
-        palette_selection_label = Label(
+        self.palette_selection_label = Label(
             self,
             font=("Courrier", 15),
             bg=self.BG_COLOR,
             fg=self.FG_COLOR,
             text="Select your color palette :",
         )
+        self.list_components.append(self.palette_selection_label)
         values_list = []
         for e in Palettes:
-            values_list.append(e.name)
-        palette_selection_box = Combobox(
+            values_list.append(e.name.replace("_", " ").capitalize())
+        self.palette_selection_box = Combobox(
             self,
             values=values_list,
-            width=10,
+            width=12,
             height=10,
             state="readonly",
             font=("Courrier", 15),
         )
-        palette_selection_box.current(0)
+        self.palette_selection_box.current(0)
+        self.palette_selection_box.bind(
+            "<<ComboboxSelected>>",
+            lambda _: self.select_color_palette(self.palette_selection_box.get()),
+        )
+        self.list_components.append(self.palette_selection_box)
 
         self.grid_columnconfigure(0, weight=1)
-        palette_selection_label.grid(row=0, column=0, pady=10, ipady=10)
-        palette_selection_box.grid(row=1, column=0, pady=10, ipady=10)
+        self.palette_selection_label.grid(row=0, column=0, pady=10, ipady=10)
+        self.palette_selection_box.grid(row=1, column=0, pady=10, ipady=10)
+
+    def change_color_palette(self, palette_name: str):
+        palette_name = palette_name.upper().replace(" ", "_")
+        self.palette = Palettes[palette_name]
+        self.FG_COLOR = self.palette.value[0]
+        self.BG_COLOR = self.palette.value[1]
+        print(self.palette.name)
+        self.config(bg=self.BG_COLOR)
+
+    def update_components(self):
+        for component in self.list_components:
+            component.configure(background=self.BG_COLOR)
+
+    def select_color_palette(self, palette_name: str):
+        self.change_color_palette(palette_name)
+        self.update_components()
 
 
 if __name__ == "__main__":

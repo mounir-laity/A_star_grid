@@ -11,3 +11,13 @@ class Palettes(Enum):
         "dark green",
         "pink",
     ]
+    # https://coolors.co/2b2d42-8d99ae-edf2f4-ef233c-d90429
+    VIVE_LA_FRANCE = [
+        "#EDF2F4",
+        "#2B2D42",
+        "#2E3532",
+        "#E0E2DB",
+        "#D3EFBD",
+        "dark green",
+        "pink",
+    ]
