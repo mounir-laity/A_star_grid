@@ -47,7 +47,7 @@ class AStarApp(Tk):
         self.change_frame(new_frame)
 
     def change_to_options_window(self, palette: Palettes):
-        new_frame = OptionsWindow(self, self.palette)
+        new_frame = OptionsWindow(self, palette)
         new_heigth = 325
         new_width = 600
         x_window = self.screen_width // 2 - new_width // 2
@@ -389,7 +389,8 @@ class OptionsWindow(Frame):
 
     def update_components(self):
         for component in self.list_components:
-            component.configure(background=self.BG_COLOR)
+            component.config(background=self.BG_COLOR)
+            component.config(foreground=self.FG_COLOR)
 
     def select_color_palette(self, palette_name: str):
         self.change_color_palette(palette_name)
