@@ -6,7 +6,7 @@ from palettes import Palettes
 
 
 class AStarApp(Tk):
-    def __init__(self):
+    def __init__(self) -> None:
         Tk.__init__(self)
         self._frame = None
         self.palette = Palettes.DEFAULT
@@ -24,17 +24,17 @@ class AStarApp(Tk):
         self.change_to_main_menu(self.palette)
         self.mainloop()
 
-    def change_frame(self, new_frame):
+    def change_frame(self, new_frame: Frame) -> None:
         if self._frame is not None:
             self._frame.destroy()
         self._frame = new_frame
         self._frame.pack(fill=BOTH, expand=True)
 
-    def change_to_main_menu(self, palette: Palettes):
+    def change_to_main_menu(self, palette: Palettes) -> None:
         new_frame = MainMenu(self, palette)
         self.change_frame(new_frame)
 
-    def change_to_grid_window(self, palette: Palettes, rows, columns):
+    def change_to_grid_window(self, palette: Palettes, rows: int, columns: int) -> None:
         padding = 100
         new_frame = GridWindow(self, palette, rows, columns)
         new_heigth = (rows + 2) * new_frame.pixel_width + padding
@@ -44,7 +44,7 @@ class AStarApp(Tk):
         self.geometry("%dx%d+%d+%d" % (new_width, new_heigth, x_window, y_window))
         self.change_frame(new_frame)
 
-    def change_to_options_window(self, palette: Palettes):
+    def change_to_options_window(self, palette: Palettes) -> None:
         new_frame = OptionsWindow(self, palette)
         new_heigth = 325
         new_width = 600
@@ -55,7 +55,7 @@ class AStarApp(Tk):
 
 
 class MainMenu(Frame):
-    def __init__(self, parent: AStarApp, palette: Palettes):
+    def __init__(self, parent: AStarApp, palette: Palettes) -> None:
         self.palette = palette
         FG_COLOR = palette.value[0]
         BG_COLOR = palette.value[1]
@@ -146,7 +146,9 @@ class MainMenu(Frame):
 
 
 class GridWindow(Frame):
-    def __init__(self, parent: AStarApp, palette: Palettes, rows, columns):
+    def __init__(
+        self, parent: AStarApp, palette: Palettes, rows: int, columns: int
+    ) -> None:
         self.pixel_width = 20
         self.rect_ids = []
         self.palette = palette
@@ -217,7 +219,7 @@ class GridWindow(Frame):
         self.restart_button.grid(row=1, column=2, padx=10, pady=5)
         self.diagonal_checkbutton.grid(row=2, column=0, padx=10, pady=5, columnspan=3)
 
-    def create_grid(self, rows, columns):
+    def create_grid(self, rows: int, columns: int) -> None:
         for y in range(rows):
             for x in range(columns):
                 x1 = x * self.pixel_width
@@ -228,13 +230,13 @@ class GridWindow(Frame):
         for rect in self.rect_ids:
             self.canvas.itemconfig(rect, fill=self.BG_COLOR)
 
-    def get_clicked_square(self, x, y):
+    def get_clicked_square(self, x: int, y: int) -> int:
         width = self.pixel_width
         if x >= 0 and y >= 0 and x < self.columns * width and y < self.rows * width:
             return (x // width) + 1 + self.columns * (y // width)
         return -1
 
-    def handle_left_click(self, event):
+    def handle_left_click(self, event: Event) -> None:
         if not self.generated:
             rect_id = self.get_clicked_square(event.x, event.y)
             if rect_id != -1:
@@ -246,7 +248,7 @@ class GridWindow(Frame):
                     self.canvas.itemconfig(rect_id, fill=self.BG_COLOR)
                     self.erase_mode = True
 
-    def draw(self, event):
+    def draw(self, event: Event) -> None:
         if not self.generated:
             rect_id = self.get_clicked_square(event.x, event.y)
             if rect_id != -1:
@@ -258,7 +260,7 @@ class GridWindow(Frame):
                     if color != self.START_COLOR and color != self.DEST_COLOR:
                         self.canvas.itemconfig(rect_id, fill=self.BG_COLOR)
 
-    def handle_right_click(self, event):
+    def handle_right_click(self, event: Event) -> None:
         if not self.generated:
             rect_id = self.get_clicked_square(event.x, event.y)
             if rect_id != -1:
@@ -277,19 +279,19 @@ class GridWindow(Frame):
                     self.canvas.itemconfig(rect_id, fill=self.BG_COLOR)
                     self.has_dest = False
 
-    def clear_grid(self, event):
+    def clear_grid(self, event: Event) -> int:
         if not self.generated:
             for rect in self.rect_ids:
                 self.canvas.itemconfig(rect, fill=self.BG_COLOR)
             self.has_dest = False
             self.has_start = False
 
-    def get_id_from_position(self, position: tuple[int, int]):
+    def get_id_from_position(self, position: tuple[int, int]) -> int:
         row = position[0]
         column = position[1]
         return row * self.columns + (column + 1)
 
-    def convert_to_graph(self):
+    def convert_to_graph(self) -> maze.Graph:
         graph = maze.Graph(self.rows, self.columns)
         for rect in self.rect_ids:
             node_row = (rect - 1) // self.columns
@@ -303,7 +305,7 @@ class GridWindow(Frame):
                 graph.set_end_node(node_row, node_column)
         return graph
 
-    def launch(self):
+    def launch(self) -> None:
         if not self.generated and self.has_start and self.has_dest:
             self.generated = True
             path_color = self.PATH_COLOR
@@ -324,13 +326,13 @@ class GridWindow(Frame):
                     "No path found !", "There is no path to the destination !"
                 )
 
-    def restart(self):
+    def restart(self) -> None:
         self.generated = False
         self.clear_grid(None)
 
 
 class OptionsWindow(Frame):
-    def __init__(self, parent: AStarApp, palette: Palettes):
+    def __init__(self, parent: AStarApp, palette: Palettes) -> None:
         self.palette = palette
         self.FG_COLOR = palette.value[0]
         self.BG_COLOR = palette.value[1]
@@ -378,19 +380,19 @@ class OptionsWindow(Frame):
         palette_selection_box.grid(row=1, column=0, pady=10, ipady=10)
         back_to_menu_button.grid(row=2, column=0, pady=10, ipady=10)
 
-    def change_color_palette(self, palette_name: str):
+    def change_color_palette(self, palette_name: str) -> None:
         palette_name = palette_name.upper().replace(" ", "_")
         self.palette = Palettes[palette_name]
         self.FG_COLOR = self.palette.value[0]
         self.BG_COLOR = self.palette.value[1]
         self.config(bg=self.BG_COLOR)
 
-    def update_components(self):
+    def update_components(self) -> None:
         for component in self.list_components:
             component.config(background=self.BG_COLOR)
             component.config(foreground=self.FG_COLOR)
 
-    def select_color_palette(self, palette_name: str):
+    def select_color_palette(self, palette_name: str) -> None:
         self.change_color_palette(palette_name)
         self.update_components()
 
