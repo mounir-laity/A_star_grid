@@ -1,27 +1,27 @@
 class Node:
-    def __init__(self, row: int, column: int, parent=None) -> None:
+    def __init__(self, row: int, column: int, parent: "Node" = None) -> None:
         self.position = (row, column)
         self.parent = parent
         self.g = 0  # Distance to start node
         self.h = 999  # Distance to goal node
         self.f = 999  # Total cost
 
-    def set_parent(self, new_parent):
+    def set_parent(self, new_parent: "Node") -> None:
         self.parent = new_parent
 
-    def __eq__(self, other):
-        if other is None:
+    def __eq__(self, other) -> bool:
+        if other is None or type(self) != type(other):
             return False
         return self.position == other.position
 
-    def __lt__(self, other):
+    def __lt__(self, other) -> bool:
         if self.f < other.f:
             return True
         if other.f < self.f:
             return False
         return self.g > other.g
 
-    def set_heuristic(self, dest_node: "Node", allow_diagonal=False):
+    def set_heuristic(self, dest_node: "Node", allow_diagonal: bool = False) -> None:
         row = self.position[0]
         column = self.position[1]
 
@@ -37,10 +37,10 @@ class Node:
             self.h = self.manhattan_distance(row_diff_dest, column_diff_dest)
         self.f = self.g + self.h
 
-    def manhattan_distance(self, row_diff, column_diff):
+    def manhattan_distance(self, row_diff: int, column_diff: int) -> int:
         return row_diff + column_diff
 
-    def chebyshev_distance(self, row_diff, column_diff):
+    def chebyshev_distance(self, row_diff: int, column_diff: int) -> int:
         if row_diff > column_diff:
             return row_diff
         else:
@@ -48,7 +48,9 @@ class Node:
 
 
 class Graph:
-    def __init__(self, rows, columns, start_node=None, end_node=None) -> None:
+    def __init__(
+        self, rows: int, columns: int, start_node: Node = None, end_node: Node = None
+    ) -> None:
         self.start_node: Node = start_node
         self.end_node: Node = end_node
         self.rows = rows
@@ -61,10 +63,10 @@ class Graph:
                 list_nodes.append(Node(row=row, column=column, parent=None))
             self.nodes.append(list_nodes)
 
-    def add_wall(self, row, column):
+    def add_wall(self, row: int, column: int) -> None:
         self.walls.append(self.get_node(row, column))
 
-    def is_wall(self, node_to_check):
+    def is_wall(self, node_to_check: Node) -> bool:
         return node_to_check in self.walls
 
     def get_neighbours(self, current_node: Node, allow_diagonal=True) -> list[Node]:
@@ -87,17 +89,17 @@ class Graph:
                             list_neighbours.append(self.nodes[i][j])
         return list_neighbours
 
-    def get_node(self, row, column) -> Node:
+    def get_node(self, row: int, column: int) -> Node:
         try:
             return self.nodes[row][column]
         except IndexError:
             print(row, column)
             exit(1)
 
-    def set_start_node(self, row, column):
+    def set_start_node(self, row: int, column: int) -> None:
         self.start_node = self.get_node(row, column)
 
-    def set_end_node(self, row, column):
+    def set_end_node(self, row: int, column: int) -> None:
         self.end_node = self.get_node(row, column)
 
     def a_star_algo(self, allow_diagonal=True) -> list[tuple[int, int]]:

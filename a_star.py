@@ -10,8 +10,6 @@ class AStarApp(Tk):
         Tk.__init__(self)
         self._frame = None
         self.palette = Palettes.DEFAULT
-        # https://coolors.co/e63946-f1faee-a8dadc-457b9d-1d3557
-        # https://coolors.co/f4f1de-e07a5f-3d405b-81b29a-f2cc8f
         window_width = 600
         window_height = 325
 
