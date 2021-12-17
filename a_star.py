@@ -332,7 +332,11 @@ class GridWindow(Frame):
 
 
 class OptionsWindow(Frame):
-    def __init__(self, parent: AStarApp, palette: Palettes) -> None:
+    def __init__(
+        self,
+        parent: AStarApp,
+        palette: Palettes,
+    ) -> None:
         self.palette = palette
         self.FG_COLOR = palette.value[0]
         self.BG_COLOR = palette.value[1]
@@ -358,7 +362,7 @@ class OptionsWindow(Frame):
             state="readonly",
             font=("Courrier", 15),
         )
-        palette_selection_box.current(0)
+        palette_selection_box.current(self.palette.value[7])
         palette_selection_box.bind(
             "<<ComboboxSelected>>",
             lambda _: self.select_color_palette(palette_selection_box.get()),
