@@ -10,7 +10,7 @@ class Node:
         self.parent = new_parent
 
     def __eq__(self, other) -> bool:
-        if other is None or type(self) != type(other):
+        if other is None or type(self) is not type(other):
             return False
         return self.position == other.position
 
