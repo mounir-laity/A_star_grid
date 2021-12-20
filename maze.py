@@ -1,20 +1,48 @@
 class Node:
+    """This class represents the Nodes of the Graph where the search algorithm is used."""
+
     def __init__(self, row: int, column: int, parent: "Node" = None) -> None:
+        """Creates a Node with the given position and default heuristics
+
+        Args:
+            row (int): The row of the Node
+
+            column (int): The column of the Node
+
+            parent (Node, optional): The Node's parent Node.
+            This is used to find the path to the destination in the a star algorithm.
+            Defaults to None.
+        """
         self.position = (row, column)
         self.parent = parent
         self.g = 0  # Distance to start node
         self.h = 999  # Distance to goal node
         self.f = 999  # Total cost
 
-    def set_parent(self, new_parent: "Node") -> None:
-        self.parent = new_parent
-
     def __eq__(self, other) -> bool:
+        """Checks if the Node is equal to the other object.
+
+        Args:
+            other (Object): The other object to check if the Node is equal to.
+
+        Returns:
+            bool: True if the two are equal, False otherwise.
+        """
         if other is None or type(self) is not type(other):
             return False
         return self.position == other.position
 
-    def __lt__(self, other) -> bool:
+    def __lt__(self, other: "Node") -> bool:
+        """Decides in which order the Nodes should be sorted based on their heuristics.
+
+        Args:
+            other (Node): The other Node to see if it should be put before
+            or after this Node during sorting.
+
+        Returns:
+            bool: True if this Node should be put first.
+            False if the other Node should be put first.
+        """
         if self.f < other.f:
             return True
         if other.f < self.f:
@@ -22,6 +50,14 @@ class Node:
         return self.g > other.g
 
     def set_heuristic(self, dest_node: "Node", allow_diagonal: bool = False) -> None:
+        """Set the heuristics of a Node. If diagonal movement is allowed,
+         the chebyshev distance is used for that. Otherwise, the simple
+         manhattan distance is used for that.
+
+        Args:
+            dest_node (Node): [description]
+            allow_diagonal (bool, optional): [description]. Defaults to False.
+        """
         row = self.position[0]
         column = self.position[1]
 
