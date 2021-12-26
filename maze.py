@@ -24,9 +24,9 @@ class Node:
         """
         self.position = (row, column)
         self.parent = parent
-        self.g = 0  # Distance to start node
-        self.h = 999  # Distance to goal node
-        self.f = self.g + self.h  # Total cost
+        self.g = 0
+        self.h = 999
+        self.f = self.g + self.h
 
     def __eq__(self, other) -> bool:
         """Checks if the Node is equal to the other object.
@@ -115,9 +115,31 @@ class Node:
 
 
 class Graph:
+    """This class represents the maze containing all the Nodes for the a star algorithm."""
+
     def __init__(
         self, rows: int, columns: int, start_node: Node = None, end_node: Node = None
     ) -> None:
+        """Creates a Graph of given size containing default Nodes
+        and initializes an empty list of walls.
+
+        Attributes:
+            start_node (Node, optional): The starting Node for the algorithm.
+            end_node (Node, optional): The goal Node for the algorithm.
+            rows (int): The number of rows of the graph.
+            columns (int): The number of columns of the graph.
+            nodes (list): The list of all Nodes rows.
+            walls (list): The list of all walls. Walls are Nodes that can't be crossed
+            by the algorithm
+
+        Args:
+            rows (int): The number of rows of the graph.
+            columns (int): The number of columns of the graph.
+            start_node (Node, optional): The starting Node for the algorithm.
+            Defaults to None.
+            end_node (Node, optional): The goal Node for the algorithm.
+            Defaults to None.
+        """
         self.start_node: Node = start_node
         self.end_node: Node = end_node
         self.rows = rows
@@ -131,12 +153,40 @@ class Graph:
             self.nodes.append(list_nodes)
 
     def add_wall(self, row: int, column: int) -> None:
+        """Adds a wall to the Graph's walls list.
+
+        Args:
+            row (int): The row of the Node to add to the list
+            column (int): The column of the Node to add to the list
+        """
         self.walls.append(self.get_node(row, column))
 
     def is_wall(self, node_to_check: Node) -> bool:
+        """Checks if the given Node is a wall.
+
+        Args:
+            node_to_check (Node): The Node to check
+
+        Returns:
+            bool: True if it the Node to check is a wall. False otherwise.
+        """
         return node_to_check in self.walls
 
     def get_neighbours(self, current_node: Node, allow_diagonal=True) -> list[Node]:
+        """Gets all Nodes accessible to the current Node with only one step.
+        These are the Nodes that are directly above, under, to the left and
+        to the right of the current Node if diagonal movement is not allowed.
+        Otherwise, they are all adjacent Nodes.
+
+        Args:
+            current_node (Node): The Node from which we must obtain all neighbours.
+            allow_diagonal (bool, optional): The flag that tells if
+            diagonal movement is allowed.
+            Defaults to True.
+
+        Returns:
+            list[Node]: The list of all neighbouring Nodes of the current Node.
+        """
         row = current_node.position[0]
         column = current_node.position[1]
         list_neighbours = []
@@ -157,19 +207,37 @@ class Graph:
         return list_neighbours
 
     def get_node(self, row: int, column: int) -> Node:
+        """Gets the Node at the given row and column values.
+
+        Args:
+            row (int): The row of the Node to get.
+            column (int): The column of the Node to get.
+
+        Returns:
+            Node: The Node at the given row and column.
+
+        Raises:
+            IndexError: If the row or column is bigger than the Graph's
+            row or columns or is smaller than 0.
+        """
         try:
             return self.nodes[row][column]
         except IndexError:
             print(row, column)
             exit(1)
 
-    def set_start_node(self, row: int, column: int) -> None:
-        self.start_node = self.get_node(row, column)
-
-    def set_end_node(self, row: int, column: int) -> None:
-        self.end_node = self.get_node(row, column)
-
     def a_star_algo(self, allow_diagonal=True) -> list[tuple[int, int]]:
+        """Uses the a star algorithm to find the shortest path between
+        the starting Node and the goal Node.
+        See https://en.wikipedia.org/wiki/A*_search_algorithm
+
+        Args:
+            allow_diagonal (bool, optional): The flag that tells if
+            diagonal movement is allowed. Defaults to True.
+
+        Returns:
+            list[tuple[int, int]]: The list of positions of all Nodes in the shortest path.
+        """
         explored = []
         to_explore = []
         self.start_node.g = 0
@@ -202,15 +270,3 @@ class Graph:
                     neighbour.parent = current
                     to_explore.append(neighbour)
         return None, explored
-
-
-if __name__ == "__main__":
-    my_graph = Graph(10, 10, Node(7, 3), Node(7, 5))
-    my_graph.walls.append(my_graph.get_node(1, 4))
-    my_graph.walls.append(my_graph.get_node(2, 4))
-    my_graph.walls.append(my_graph.get_node(7, 4))
-    my_graph.walls.append(my_graph.get_node(3, 4))
-    my_graph.walls.append(my_graph.get_node(4, 4))
-    my_graph.walls.append(my_graph.get_node(5, 4))
-    my_graph.walls.append(my_graph.get_node(6, 4))
-    my_graph.walls.append(my_graph.get_node(8, 4))
