@@ -323,12 +323,27 @@ class GridWindow(Frame):
             self.canvas.itemconfig(rect, fill=self.BG_COLOR)
 
     def get_clicked_square(self, x: int, y: int) -> int:
+        """Gets the id of the square based on the position of the cursor when the click occured.
+
+        Args:
+            x (int): The x-axis of the cursor when the click occured.
+            y (int): The y-axis of the cursor when the click occured.
+
+        Returns:
+            int: The id of the clicked square.
+        """
         width = self.square_width
         if x >= 0 and y >= 0 and x < self.columns * width and y < self.rows * width:
             return (x // width) + 1 + self.columns * (y // width)
         return -1
 
     def handle_left_click(self, event: Event) -> None:
+        """Makes the square at the cursor's position a wall when a left click event
+        is recognized. It will erase the wall instead if it is already a wall.
+
+        Args:
+            event (Event): The left click event.
+        """
         if not self.generated:
             rect_id = self.get_clicked_square(event.x, event.y)
             if rect_id != -1:
@@ -341,6 +356,14 @@ class GridWindow(Frame):
                     self.erase_mode = True
 
     def draw(self, event: Event) -> None:
+        """Draws wall on all squares hovered by the cursor while the left click button is
+        held down.
+        If the first square hovered is a wall, it will instead erase all walls hovered by
+        the cursor while the left click button is held down.
+
+        Args:
+            event (Event): The left click holding event.
+        """
         if not self.generated:
             rect_id = self.get_clicked_square(event.x, event.y)
             if rect_id != -1:
@@ -353,6 +376,14 @@ class GridWindow(Frame):
                         self.canvas.itemconfig(rect_id, fill=self.BG_COLOR)
 
     def handle_right_click(self, event: Event) -> None:
+        """Creates a starting square on the square at the cursor's position
+        if it isn't already existing. If it is here, it will create a goal square
+        on the square at the cursor's position if it isn't already existing.
+        If the square is already a starting or goal square, it will remove it instead.
+
+        Args:
+            event (Event): The right click event.
+        """
         if not self.generated:
             rect_id = self.get_clicked_square(event.x, event.y)
             if rect_id != -1:
@@ -371,7 +402,12 @@ class GridWindow(Frame):
                     self.canvas.itemconfig(rect_id, fill=self.BG_COLOR)
                     self.has_dest = False
 
-    def clear_grid(self, event: Event) -> int:
+    def clear_grid(self, event: Event):
+        """Clears the grid by removing all walls, the start and the end squares.
+
+        Args:
+            event (Event): The middle mouse button event.
+        """
         if not self.generated:
             for rect in self.rect_ids:
                 self.canvas.itemconfig(rect, fill=self.BG_COLOR)
@@ -379,11 +415,24 @@ class GridWindow(Frame):
             self.has_start = False
 
     def get_id_from_position(self, position: tuple[int, int]) -> int:
+        """Gets the rectangle id corresponding of the square at the given position.
+
+        Args:
+            position (tuple[int, int]): The position to get the square id from.
+
+        Returns:
+            int: The id of the square at the position.
+        """
         row = position[0]
         column = position[1]
         return row * self.columns + (column + 1)
 
     def convert_to_graph(self) -> maze.Graph:
+        """Converts the grid of squares to a Graph of Nodes.
+
+        Returns:
+            maze.Graph: The Graph obtained by converting the grid.
+        """
         graph = maze.Graph(self.rows, self.columns)
         for rect in self.rect_ids:
             node_row = (rect - 1) // self.columns
@@ -398,6 +447,10 @@ class GridWindow(Frame):
         return graph
 
     def launch(self) -> None:
+        """Uses the a star algorithm to find the shortest path between the start and destination.
+        The path will be showed in its own color and all explored squares are also shown.
+        If there is no path possible between the two Nodes, a message box appears to inform the user.
+        """
         if not self.generated and self.has_start and self.has_dest:
             self.generated = True
             path_color = self.PATH_COLOR
@@ -419,6 +472,7 @@ class GridWindow(Frame):
                 )
 
     def restart(self) -> None:
+        """Clears the grid and allows the user to start drawing again."""
         self.generated = False
         self.clear_grid(None)
 
