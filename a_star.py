@@ -478,11 +478,27 @@ class GridWindow(Frame):
 
 
 class OptionsWindow(Frame):
+    """This class represents the options window where the user
+    can change color palettes for the application.
+    """
+
     def __init__(
         self,
         parent: AStarApp,
         palette: Palettes,
     ) -> None:
+        """Creates an optionsWindow frame for the application.
+
+        Attributes:
+            palette (Palettes): The color palette for this frame.
+            FG_COLOR (str): The foreground color of this frame.
+            BG_COLOR (str): The background color of this frame.
+            list_components (list): The list of all widgets of this frame.
+
+        Args:
+            parent (AStarApp): The parent application using this frame.
+            palette (Palettes): The color palette to apply.
+        """
         self.palette = palette
         self.FG_COLOR = palette.value[0]
         self.BG_COLOR = palette.value[1]
@@ -531,6 +547,11 @@ class OptionsWindow(Frame):
         back_to_menu_button.grid(row=2, column=0, pady=10, ipady=10)
 
     def change_color_palette(self, palette_name: str) -> None:
+        """Changes the color palette and applies the new one.
+
+        Args:
+            palette_name (str): The new color palette name to change to.
+        """
         palette_name = palette_name.upper().replace(" ", "_")
         self.palette = Palettes[palette_name]
         self.FG_COLOR = self.palette.value[0]
@@ -538,15 +559,22 @@ class OptionsWindow(Frame):
         self.config(bg=self.BG_COLOR)
 
     def update_components(self) -> None:
+        """Updates the foreground and background colors of all widgets."""
         for component in self.list_components:
             component.config(background=self.BG_COLOR)
             component.config(foreground=self.FG_COLOR)
 
     def select_color_palette(self, palette_name: str) -> None:
+        """Applies the chosen color palette.
+
+        Args:
+            palette_name (str): The name of the color palette to apply.
+        """
         self.change_color_palette(palette_name)
         self.update_components()
 
 
 if __name__ == "__main__":
+    """Launches the application"""
     app = AStarApp()
     app.mainloop()
