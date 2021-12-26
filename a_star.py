@@ -205,7 +205,24 @@ class GridWindow(Frame):
         """Creates a grid frame for the application.
 
         Attributes:
-
+            square_width (int): The width of a square of the grid.
+            rect_ids (list[int]): The list of all ids of  the squares contained in the grid.
+            palette (Palettes): The color palette to apply.
+            FG_COLOR (str): The value for the foreground color of the window.
+            BG_COLOR (str): The value for the background color of the window.
+            WALL_COLOR (str): The value for the wall color of the window.
+            START_COLOR (str): The value for the starting square color of the window.
+            DEST_COLOR (str): The value for the goal square color of the window.
+            PATH_COLOR (str): The value for the path color of the window.
+            EXPLORED_COLOR (str): The value for the explored squares color of the window.
+            rows (int): The number of rows in the grid.
+            columns (int): The number of columns in the grid.
+            erase_mode (bool): Determines if the left click should erase walls or not.
+            has_start (bool): Determines if there is a starting square for the algorithm.
+            has_dest (bool): Determines if there is a goal square for the algorithm.
+            generated (bool): Determines if the algorithm has generated a path or not.
+            allow_diagonal (bool): Determines if diagonal movement is allowed by the algorithm.
+            canvas (Canvas): The canvas where the grid is drawn.
 
         Args:
             parent (AStarApp): The application using this frame.
@@ -241,7 +258,7 @@ class GridWindow(Frame):
             width=(columns + 2) * self.square_width,
         )
         self.canvas = Canvas(self, bg=self.BG_COLOR, bd=0, highlightthickness=0)
-        self.gen_button = Button(
+        gen_button = Button(
             self,
             text="Find path",
             font=("Courrier", 15),
@@ -249,7 +266,7 @@ class GridWindow(Frame):
             fg=self.FG_COLOR,
             command=self.launch,
         )
-        self.restart_button = Button(
+        restart_button = Button(
             self,
             text="Restart",
             font=("Courrier", 15),
@@ -257,7 +274,7 @@ class GridWindow(Frame):
             fg=self.FG_COLOR,
             command=self.restart,
         )
-        self.diagonal_checkbutton = Checkbutton(
+        diagonal_checkbutton = Checkbutton(
             self,
             text="Allow diagonal movement",
             font=("Courrier", 13),
@@ -283,11 +300,18 @@ class GridWindow(Frame):
         self.canvas.bind("<Button-3>", self.handle_right_click)
         self.canvas.bind("<Button-2>", self.clear_grid)
 
-        self.gen_button.grid(row=1, column=0, padx=10, pady=5)
-        self.restart_button.grid(row=1, column=2, padx=10, pady=5)
-        self.diagonal_checkbutton.grid(row=2, column=0, padx=10, pady=5, columnspan=3)
+        gen_button.grid(row=1, column=0, padx=10, pady=5)
+        restart_button.grid(row=1, column=2, padx=10, pady=5)
+        diagonal_checkbutton.grid(row=2, column=0, padx=10, pady=5, columnspan=3)
 
     def create_grid(self, rows: int, columns: int) -> None:
+        """Creates a grid in the canvas based on the desired dimensions and adds the created
+        squares to rect_ids.
+
+        Args:
+            rows (int): The number of rows of the grid.
+            columns (int): The number of columns of the grid.
+        """
         for y in range(rows):
             for x in range(columns):
                 x1 = x * self.square_width
@@ -370,7 +394,7 @@ class GridWindow(Frame):
             elif color == self.START_COLOR:
                 graph.set_start_node(node_row, node_column)
             elif color == self.DEST_COLOR:
-                graph.set_end_node(node_row, node_column)
+                graph.set_dest_node(node_row, node_column)
         return graph
 
     def launch(self) -> None:

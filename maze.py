@@ -118,14 +118,14 @@ class Graph:
     """This class represents the maze containing all the Nodes for the a star algorithm."""
 
     def __init__(
-        self, rows: int, columns: int, start_node: Node = None, end_node: Node = None
+        self, rows: int, columns: int, start_node: Node = None, dest_node: Node = None
     ) -> None:
         """Creates a Graph of given size containing default Nodes
         and initializes an empty list of walls.
 
         Attributes:
             start_node (Node, optional): The starting Node for the algorithm.
-            end_node (Node, optional): The goal Node for the algorithm.
+            dest_node (Node, optional): The goal Node for the algorithm.
             rows (int): The number of rows of the graph.
             columns (int): The number of columns of the graph.
             nodes (list): The list of all Nodes rows.
@@ -137,11 +137,11 @@ class Graph:
             columns (int): The number of columns of the graph.
             start_node (Node, optional): The starting Node for the algorithm.
             Defaults to None.
-            end_node (Node, optional): The goal Node for the algorithm.
+            dest_node (Node, optional): The goal Node for the algorithm.
             Defaults to None.
         """
         self.start_node: Node = start_node
-        self.end_node: Node = end_node
+        self.dest_node: Node = dest_node
         self.rows = rows
         self.columns = columns
         self.nodes = []
@@ -226,6 +226,24 @@ class Graph:
             print(row, column)
             exit(1)
 
+    def set_start_node(self, row, column):
+        """Sets the starting Node to the one given by its row and column.
+
+        Args:
+            row ([type]): The row of the Node to set as the starting Node.
+            column ([type]): The column of the Node to set as the starting Node.
+        """
+        self.start_node = self.get_node(row, column)
+
+    def set_dest_node(self, row, column):
+        """Sets the goal Node to the one given by its row and column.
+
+        Args:
+            row ([type]): The row of the Node to set as the goal Node.
+            column ([type]): The column of the Node to set as the goal Node.
+        """
+        self.dest_node = self.get_node(row, column)
+
     def a_star_algo(self, allow_diagonal=True) -> list[tuple[int, int]]:
         """Uses the a star algorithm to find the shortest path between
         the starting Node and the goal Node.
@@ -241,13 +259,13 @@ class Graph:
         explored = []
         to_explore = []
         self.start_node.g = 0
-        self.start_node.set_heuristic(self.end_node, allow_diagonal)
+        self.start_node.set_heuristic(self.dest_node, allow_diagonal)
         to_explore.append(self.start_node)
         while to_explore:
             to_explore.sort()
             current = to_explore.pop(0)
             explored.append(current)
-            if current == self.end_node:
+            if current == self.dest_node:
                 path = []
                 while current != self.start_node:
                     path.append(current.position)
@@ -259,7 +277,7 @@ class Graph:
             neighbours = self.get_neighbours(current, allow_diagonal)
             for neighbour in neighbours:
                 neighbour.g = current.g + 1
-                neighbour.set_heuristic(self.end_node, allow_diagonal)
+                neighbour.set_heuristic(self.dest_node, allow_diagonal)
             neighbours.sort()
             for neighbour in neighbours:
                 if self.is_wall(neighbour):
