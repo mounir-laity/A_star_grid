@@ -4,20 +4,29 @@ class Node:
     def __init__(self, row: int, column: int, parent: "Node" = None) -> None:
         """Creates a Node with the given position and default heuristics
 
+        Attributes:
+            position (tuple): The position (row, column) of the Node
+
+            parent (Node) : The parent Node of this Node.
+                This is used to find the path to the destination in the a star algorithm.
+
+            g (int): The number of Nodes separating this Node to the starting Node
+            h (int): The number of Nodes separating this Node to the goal Node
+            f (int): The total cost of the Node (calculated by doing g + h)
+
         Args:
             row (int): The row of the Node
 
             column (int): The column of the Node
 
             parent (Node, optional): The Node's parent Node.
-            This is used to find the path to the destination in the a star algorithm.
-            Defaults to None.
+                Defaults to None.
         """
         self.position = (row, column)
         self.parent = parent
         self.g = 0  # Distance to start node
         self.h = 999  # Distance to goal node
-        self.f = 999  # Total cost
+        self.f = self.g + self.h  # Total cost
 
     def __eq__(self, other) -> bool:
         """Checks if the Node is equal to the other object.
@@ -55,8 +64,10 @@ class Node:
          manhattan distance is used for that.
 
         Args:
-            dest_node (Node): [description]
-            allow_diagonal (bool, optional): [description]. Defaults to False.
+            dest_node (Node): The goal Node to calculate the distance to.
+            allow_diagonal (bool, optional): The flag that tells if
+            diagonal movement is allowed.
+            Defaults to False.
         """
         row = self.position[0]
         column = self.position[1]
@@ -74,9 +85,29 @@ class Node:
         self.f = self.g + self.h
 
     def manhattan_distance(self, row_diff: int, column_diff: int) -> int:
+        """Calculates the distance between two Nodes using the manhattan distance technique.
+        see http://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html
+
+        Args:
+            row_diff (int): The difference between the two nodes row values
+            column_diff (int): The difference between the two column values
+
+        Returns:
+            int: The total distance
+        """
         return row_diff + column_diff
 
     def chebyshev_distance(self, row_diff: int, column_diff: int) -> int:
+        """Calculates the distance between two Nodes using the Chebyshev distance method.
+        see http://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html
+
+        Args:
+            row_diff (int): The difference between the two nodes row values
+            column_diff (int): The difference between the two column values
+
+        Returns:
+            int: The total distance
+        """
         if row_diff > column_diff:
             return row_diff
         else:
