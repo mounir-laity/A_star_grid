@@ -6,7 +6,18 @@ from palettes import Palettes
 
 
 class AStarApp(Tk):
+    """This application uses the A star algorithm to find the shortest path between two
+    squares in a grid. It uses tkinter for the GUI.
+    """
+
     def __init__(self) -> None:
+        """Creates a new window of adequate size and launches the main menu of the application.
+
+        Attributes:
+            palette (Palettes): The current color palette of the application.
+            screen_width (int): The width of the screen.
+            screen_height (int): The height of the screen.
+        """
         Tk.__init__(self)
         self._frame = None
         self.palette = Palettes.DEFAULT
@@ -25,26 +36,48 @@ class AStarApp(Tk):
         self.mainloop()
 
     def change_frame(self, new_frame: Frame) -> None:
+        """Destroys the current frame and switches to the new frame
+
+        Args:
+            new_frame (Frame): The new frame to display
+        """
         if self._frame is not None:
             self._frame.destroy()
         self._frame = new_frame
         self._frame.pack(fill=BOTH, expand=True)
 
     def change_to_main_menu(self, palette: Palettes) -> None:
+        """Displays the main menu frame.
+
+        Args:
+            palette (Palettes): The color palette to apply.
+        """
         new_frame = MainMenu(self, palette)
         self.change_frame(new_frame)
 
     def change_to_grid_window(self, palette: Palettes, rows: int, columns: int) -> None:
+        """Changes the frame to the grid window frame.
+
+        Args:
+            palette (Palettes): The color palette to apply.
+            rows (int): The number of rows of the grid.
+            columns (int): The number of columns of the grid.
+        """
         padding = 100
         new_frame = GridWindow(self, palette, rows, columns)
-        new_heigth = (rows + 2) * new_frame.pixel_width + padding
-        new_width = (columns + 2) * new_frame.pixel_width
+        new_heigth = (rows + 2) * new_frame.square_width + padding
+        new_width = (columns + 2) * new_frame.square_width
         x_window = self.screen_width // 2 - new_width // 2
         y_window = self.screen_height // 2 - new_heigth // 2
         self.geometry("%dx%d+%d+%d" % (new_width, new_heigth, x_window, y_window))
         self.change_frame(new_frame)
 
     def change_to_options_window(self, palette: Palettes) -> None:
+        """Changes the frame to display the options window.
+
+        Args:
+            palette (Palettes): The color palette to apply.
+        """
         new_frame = OptionsWindow(self, palette)
         new_heigth = 325
         new_width = 600
@@ -55,7 +88,20 @@ class AStarApp(Tk):
 
 
 class MainMenu(Frame):
+    """This represents the main menu of the application.
+    It allows the user to choose the size of the grid and to go to the options menu.
+    """
+
     def __init__(self, parent: AStarApp, palette: Palettes) -> None:
+        """Creates a main menu frame for the application.
+
+        Attributes:
+            palette (Palettes): The current color palette of the main menu.
+
+        Args:
+            parent (AStarApp): The application using the frame.
+            palette (Palettes): The color palette to apply.
+        """
         self.palette = palette
         FG_COLOR = palette.value[0]
         BG_COLOR = palette.value[1]
@@ -146,10 +192,28 @@ class MainMenu(Frame):
 
 
 class GridWindow(Frame):
+    """This represents the grid window of the application.
+    In this window, the user can set the maze up for the a star algorithm.
+    They can put the start and goal squares and draw walls. They can also
+    choose whether to allow diagonal movement for the algorithm. It also allows
+    the user to try with multiple configurations simply by restarting the grid.
+    """
+
     def __init__(
         self, parent: AStarApp, palette: Palettes, rows: int, columns: int
     ) -> None:
-        self.pixel_width = 20
+        """Creates a grid frame for the application.
+
+        Attributes:
+
+
+        Args:
+            parent (AStarApp): The application using this frame.
+            palette (Palettes): The color palette to apply.
+            rows (int): The number of rows for the grid.
+            columns (int): The number of columns for the grid.
+        """
+        self.square_width = 20
         self.rect_ids = []
         self.palette = palette
         self.FG_COLOR = palette.value[0]
@@ -173,8 +237,8 @@ class GridWindow(Frame):
             self,
             parent,
             background=self.BG_COLOR,
-            height=(rows + 2) * self.pixel_width,
-            width=(columns + 2) * self.pixel_width,
+            height=(rows + 2) * self.square_width,
+            width=(columns + 2) * self.square_width,
         )
         self.canvas = Canvas(self, bg=self.BG_COLOR, bd=0, highlightthickness=0)
         self.gen_button = Button(
@@ -204,10 +268,14 @@ class GridWindow(Frame):
         )
 
         self.canvas.grid(
-            row=0, column=0, padx=self.pixel_width, pady=self.pixel_width, columnspan=3
+            row=0,
+            column=0,
+            padx=self.square_width,
+            pady=self.square_width,
+            columnspan=3,
         )
         self.canvas.config(
-            height=rows * self.pixel_width + 1, width=columns * self.pixel_width + 1
+            height=rows * self.square_width + 1, width=columns * self.square_width + 1
         )
         self.create_grid(rows, columns)
         self.canvas.bind("<Button-1>", self.handle_left_click)
@@ -222,16 +290,16 @@ class GridWindow(Frame):
     def create_grid(self, rows: int, columns: int) -> None:
         for y in range(rows):
             for x in range(columns):
-                x1 = x * self.pixel_width
-                x2 = x1 + self.pixel_width
-                y1 = y * self.pixel_width
-                y2 = y1 + self.pixel_width
+                x1 = x * self.square_width
+                x2 = x1 + self.square_width
+                y1 = y * self.square_width
+                y2 = y1 + self.square_width
                 self.rect_ids.append(self.canvas.create_rectangle(x1, y1, x2, y2))
         for rect in self.rect_ids:
             self.canvas.itemconfig(rect, fill=self.BG_COLOR)
 
     def get_clicked_square(self, x: int, y: int) -> int:
-        width = self.pixel_width
+        width = self.square_width
         if x >= 0 and y >= 0 and x < self.columns * width and y < self.rows * width:
             return (x // width) + 1 + self.columns * (y // width)
         return -1
