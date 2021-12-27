@@ -1,8 +1,11 @@
 from tkinter import *
 from tkinter import messagebox
+import tkinter
 from tkinter.ttk import Combobox
 import maze
 from palettes import Palettes
+import os
+import sys
 
 
 class AStarApp(Tk):
@@ -24,7 +27,10 @@ class AStarApp(Tk):
         window_width = 600
         window_height = 325
         self.title("A* algorithm")
-        self.iconbitmap("resources\icon.ico")  # comment this line for pyinstaller
+        try:
+            self.iconbitmap("resources\icon.ico")  # comment this line for pyinstaller
+        except tkinter.TclError:
+            pass
         self.screen_width = self.winfo_screenwidth()
         self.screen_height = self.winfo_screenheight()
         x_window = self.screen_width // 2 - window_width // 2
