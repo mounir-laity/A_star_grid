@@ -13,7 +13,7 @@ This project only uses Tkinter. Since Tkinter is already included in the Python 
 ### Main Menu
 When launching this program, you'll be greeted with the main menu where you can choose the grid's size, go to the options menu or create the grid.
 ![This is the first window that opens when launching the application](https://imagizer.imageshack.com/v2/904x529q90/r/922/nofL1v.png)
-This is the first window that opens when launching the applicationThe size of the grid can go from 10x10 to 40x40.
+The size of the grid can go from 10x10 to 40x40.
 ### Options window
 This is the options window of the application. It allows you to see the controls and it allows you to change the color palette. Right now, there are 3 differents color palettes but more may be added in the future. You can also add them yourself by adding a new value in the *Palettes* enum if you want.
 ![You can change the color palette here](https://imagizer.imageshack.com/v2/895x535q90/r/923/Vo7qo2.png)
