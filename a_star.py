@@ -25,7 +25,9 @@ class AStarApp(Tk):
         window_height = 325
 
         self.title("A* algorithm demonstration")
-        self.iconbitmap("resources\icon.ico")
+        self.iconbitmap(
+            "resources\icon.ico"
+        )  # use absolute path for pyinstaller : "C:\\Codes_Python\\A_star_algo\\resources\\icon.ico"
         self.screen_width = self.winfo_screenwidth()
         self.screen_height = self.winfo_screenheight()
         x_window = self.screen_width // 2 - window_width // 2
