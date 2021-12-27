@@ -25,9 +25,7 @@ class AStarApp(Tk):
         window_height = 325
 
         self.title("A* algorithm demonstration")
-        self.iconbitmap(
-            "resources\icon.ico"
-        )  # use absolute path for pyinstaller : "C:\\Codes_Python\\A_star_algo\\resources\\icon.ico"
+        self.iconbitmap("resources\icon.ico")  # comment this line for pyinstaller
         self.screen_width = self.winfo_screenwidth()
         self.screen_height = self.winfo_screenheight()
         x_window = self.screen_width // 2 - window_width // 2
@@ -507,12 +505,24 @@ class OptionsWindow(Frame):
         self.list_components = []
         Frame.__init__(self, parent, background=palette.value[1])
 
+        usage_label = Label(
+            self,
+            font=("Courrier", 15),
+            bg=self.BG_COLOR,
+            fg=self.FG_COLOR,
+            text="Usage:\n"
+            + "Left click: Draw/erase walls\n"
+            + "Right click: Set starting square and goal square\n"
+            + "Middle click: Clear grid",
+        )
+        self.list_components.append(usage_label)
+
         palette_selection_label = Label(
             self,
             font=("Courrier", 15),
             bg=self.BG_COLOR,
             fg=self.FG_COLOR,
-            text="Select your color palette :",
+            text="Color palette :",
         )
         self.list_components.append(palette_selection_label)
         values_list = []
@@ -544,9 +554,10 @@ class OptionsWindow(Frame):
         self.list_components.append(back_to_menu_button)
 
         self.grid_columnconfigure(0, weight=1)
-        palette_selection_label.grid(row=0, column=0, pady=10, ipady=10)
-        palette_selection_box.grid(row=1, column=0, pady=10, ipady=10)
-        back_to_menu_button.grid(row=2, column=0, pady=10, ipady=10)
+        usage_label.grid(row=0, column=0, pady=5, ipady=10)
+        palette_selection_label.grid(row=1, column=0, pady=5, ipady=10)
+        palette_selection_box.grid(row=2, column=0, pady=5, ipady=10)
+        back_to_menu_button.grid(row=3, column=0, pady=5, ipady=10)
 
     def change_color_palette(self, palette_name: str) -> None:
         """Changes the color palette and applies the new one.
