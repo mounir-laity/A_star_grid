@@ -23,8 +23,7 @@ class AStarApp(Tk):
         self.palette = Palettes.DEFAULT
         window_width = 600
         window_height = 325
-
-        self.title("A* algorithm demonstration")
+        self.title("A* algorithm")
         self.iconbitmap("resources\icon.ico")  # comment this line for pyinstaller
         self.screen_width = self.winfo_screenwidth()
         self.screen_height = self.winfo_screenheight()
@@ -54,6 +53,7 @@ class AStarApp(Tk):
         """
         new_frame = MainMenu(self, palette)
         self.change_frame(new_frame)
+        self.title("A* algorithm - Main Menu")
 
     def change_to_grid_window(self, palette: Palettes, rows: int, columns: int) -> None:
         """Changes the frame to the grid window frame.
@@ -71,6 +71,7 @@ class AStarApp(Tk):
         y_window = self.screen_height // 2 - new_heigth // 2
         self.geometry("%dx%d+%d+%d" % (new_width, new_heigth, x_window, y_window))
         self.change_frame(new_frame)
+        self.title("A* algorithm")
 
     def change_to_options_window(self, palette: Palettes) -> None:
         """Changes the frame to display the options window.
@@ -85,6 +86,7 @@ class AStarApp(Tk):
         y_window = self.screen_height // 2 - new_heigth // 2
         self.geometry("%dx%d+%d+%d" % (new_width, new_heigth, x_window, y_window))
         self.change_frame(new_frame)
+        self.title("A* algorithm - Options Menu")
 
 
 class MainMenu(Frame):
