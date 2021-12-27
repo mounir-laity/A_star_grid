@@ -1,6 +1,4 @@
-
-# Created by https://www.toptal.com/developers/gitignore/api/python,visualstudiocode
-# Edit at https://www.toptal.com/developers/gitignore?templates=python,visualstudiocode
+#Generated through https://www.toptal.com/developers/gitignore
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
@@ -161,4 +159,5 @@ cython_debug/
 # Support for Project snippet scope
 !.vscode/*.code-snippets
 
-# End of https://www.toptal.com/developers/gitignore/api/python,visualstudiocode
+#Virtual env
+virtual_env/
