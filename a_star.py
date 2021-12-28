@@ -1,11 +1,12 @@
+# -*- encoding: utf-8 -*-
+# Author : Mounir Laity
+# Version : 1.0
 from tkinter import *
 from tkinter import messagebox
 import tkinter
 from tkinter.ttk import Combobox
 import maze
 from palettes import Palettes
-import os
-import sys
 
 
 class AStarApp(Tk):

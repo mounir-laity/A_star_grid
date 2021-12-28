@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*-
 class Node:
     """This class represents the Nodes of the Graph where the search algorithm is used."""
 

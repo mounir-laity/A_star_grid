@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*-
 from enum import Enum
 
 # pattern : [fg_color, bg_color, wall_color, start_color, end_color, path_color, explored_color, palette number]
