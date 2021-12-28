@@ -24,3 +24,6 @@ This is the main window. You can create your maze here. The left mouse button al
 ## Pyinstaller
 To create an executable for this project using pyinstaller, i recommand **[using auto-py-to-exe](https://pypi.org/project/auto-py-to-exe/)**
 For that, you'll need to comment the requested line line in the *a_star.py* file (just search for "pyinstaller" in the file) since tkinter's *iconbitmap* method doesn't work great with pyinstaller.
+
+## License
+This project is under the **[GNU General Public License v3.0 (GNU GPLv3) license.](https://choosealicense.com/licenses/gpl-3.0/)**
