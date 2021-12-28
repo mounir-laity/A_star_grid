@@ -12,13 +12,17 @@ This project only uses Tkinter. Since Tkinter is already included in the Python 
 ## How to use
 ### Main Menu
 When launching this program, you'll be greeted with the main menu where you can choose the grid's size, go to the options menu or create the grid.
+
 ![This is the first window that opens when launching the application](https://imagizer.imageshack.com/v2/904x529q90/r/922/nofL1v.png)
+
 The size of the grid can go from 10x10 to 40x40.
 ### Options window
 This is the options window of the application. It allows you to see the controls and it allows you to change the color palette. Right now, there are 3 differents color palettes but more may be added in the future. You can also add them yourself by adding a new value in the *Palettes* enum if you want.
+
 ![You can change the color palette here](https://imagizer.imageshack.com/v2/895x535q90/r/923/Vo7qo2.png)
 ### Grid window
 This is the main window. You can create your maze here. The left mouse button allows you to draw/erase walls. You can setup a starting and goal position with the right click button. The middle mouse button lets you clear the grid. You can also decide whether to authorise diagonal movement or not. When you have everything setup, you can click on the ***Find path*** button to let the algorithm find the shortest path between you starting square and goal square.
+
 ![Left click to draw walls, right click for start and goal squares](https://imagizer.imageshack.com/img924/8831/Jmq12O.gif)
 
 ## Pyinstaller
